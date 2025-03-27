@@ -1,8 +1,8 @@
 import LoggerConfig from "@/config/LoggerConfig.js";
+import ServerConfig from "@/config/ServerConfig.js";
 import Logger from "@/Logger.js";
 import Server from "@/Server.js";
 import app from "@/app.js";
-import ServerConfig from "@/config/ServerConfig.js";
 
 const { port } = new ServerConfig();
 
