@@ -7,9 +7,13 @@
     "format": "prettier --write .",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "migrate:create": "migrate create",
+    "migrate:up": "migrate up",
+    "migrate:down": "migrate down"
   },
   "devDependencies": {
+    "migrix": "^0.1.0",
     "prettier": "^3.5.3"
   }
 }
