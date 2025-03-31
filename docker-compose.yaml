@@ -4,11 +4,10 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: spotyvoice
-      POSTGRES_USER: spotyvoice
-      POSTGRES_PASSWORD: spotyvoice
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
-      - pgdata:/var/lib/postgresql/data
-
+      - pg_data:/var/lib/postgresql/data
 volumes:
-  pgdata:
+  pg_data:

@@ -1,7 +1,9 @@
+import { envEnum } from "@/config/helpers.js";
+
 export default class LoggerConfig {
     readonly level: string;
 
     constructor() {
-        this.level = process.env.LOG_LEVEL ?? "info";
+        this.level = envEnum("LOG_LEVEL", ["debug", "info", "warn", "error"], "info");
     }
 }
