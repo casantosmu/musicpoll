@@ -1,3 +1,3 @@
 export default function App() {
-    return "hello world";
+    return <h1 className="text-2xl underline">Hello world!</h1>;
 }
