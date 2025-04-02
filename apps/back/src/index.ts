@@ -12,7 +12,7 @@ const pool = new pg.Pool(new PostgresConfig());
 const logger = new Logger(new LoggerConfig());
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-const server = new Server(app({ logger }));
+const server = new Server(app({ logger, pool }));
 
 await pool.query("SELECT 1+1");
 logger.info("Successfully connected to Postgres");

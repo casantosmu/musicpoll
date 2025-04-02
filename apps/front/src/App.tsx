@@ -1,3 +1,3 @@
 export default function App() {
-    return <h1 className="text-2xl underline">Hello world!</h1>;
+    return <a href="/api/v1/auth/spotify/login">Login with Spotify</a>;
 }
