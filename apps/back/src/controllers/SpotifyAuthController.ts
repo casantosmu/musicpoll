@@ -11,16 +11,16 @@ export default class SpotifyAuthController {
     private readonly spotifyService: SpotifyService;
 
     constructor(logger: Logger, userService: UserService, spotifyService: SpotifyService) {
-        this.logger = logger.child({ scope: this.constructor.name });
+        this.logger = logger.child({ name: this.constructor.name });
         this.userService = userService;
         this.spotifyService = spotifyService;
     }
 
-    spotifyLogin(req: Request, res: Response) {
+    login(req: Request, res: Response) {
         res.redirect(this.spotifyService.buildAuthUrl());
     }
 
-    async spotifyCallback(req: Request, res: Response, next: NextFunction) {
+    async callback(req: Request, res: Response, next: NextFunction) {
         const error = req.query.error;
         const code = req.query.code;
 
@@ -38,7 +38,7 @@ export default class SpotifyAuthController {
 
         const tokens = await this.spotifyService.getAccessToken(code);
         const me = await this.spotifyService.getMe(tokens.accessToken);
-        const user = await this.userService.create({
+        const user = await this.userService.upsert({
             email: me.email,
             spotifyAccount: {
                 userId: me.id,

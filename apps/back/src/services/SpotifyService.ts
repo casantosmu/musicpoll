@@ -35,7 +35,8 @@ export default class SpotifyService {
         });
 
         if (!response.ok) {
-            throw new InternalServerError(`${response.status} ${response.statusText}`);
+            const body = await response.text();
+            throw new InternalServerError(`${response.status} ${response.statusText} ${body}`);
         }
 
         const data = (await response.json()) as {
@@ -59,7 +60,8 @@ export default class SpotifyService {
         });
 
         if (!response.ok) {
-            throw new InternalServerError(`${response.status} ${response.statusText}`);
+            const body = await response.text();
+            throw new InternalServerError(`${response.status} ${response.statusText} ${body}`);
         }
 
         return (await response.json()) as {

@@ -10,11 +10,11 @@ export default abstract class Repository<Entity> {
 
     protected constructor(tableName: string, logger: Logger, pool: pg.Pool) {
         this.tableName = tableName;
-        this.logger = logger;
+        this.logger = logger.child({ name: this.constructor.name });
         this.pool = pool;
     }
 
-    private async query(text: string, params?: unknown[]) {
+    protected async query(text: string, params?: unknown[]) {
         const start = Date.now();
         try {
             const result = await this.pool.query(text, params);
@@ -39,14 +39,7 @@ export default abstract class Repository<Entity> {
         return camelcaseKeys(result.rows[0]) as Entity;
     }
 
-    async findAll() {
-        const sql = `SELECT * FROM "${this.tableName}";`;
-        const result = await this.query(sql);
-
-        return camelcaseKeys(result.rows) as Entity[];
-    }
-
-    async create(props: Entity) {
+    async save(props: Entity) {
         const columns: string[] = [];
         const placeholders: string[] = [];
         const values: unknown[] = [];
@@ -83,12 +76,6 @@ export default abstract class Repository<Entity> {
         ;`;
 
         const result = await this.query(sql, values);
-        return result.rowCount ? result.rowCount > 0 : false;
-    }
-
-    async delete(id: string) {
-        const sql = `DELETE FROM "${this.tableName}" WHERE id = $1;`; // Asume PK 'id'
-        const result = await this.query(sql, [id]);
         return result.rowCount ? result.rowCount > 0 : false;
     }
 }

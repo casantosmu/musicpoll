@@ -40,17 +40,25 @@ export default function app({ logger, pool }: Parameters) {
     app.get("/v1/auth/spotify/login", (req, res) => {
         new SpotifyAuthController(
             req.logger,
-            new UserService(new UserRepository(req.logger, pool), new LinkedAccountRepository(req.logger, pool)),
+            new UserService(
+                req.logger,
+                new UserRepository(req.logger, pool),
+                new LinkedAccountRepository(req.logger, pool),
+            ),
             new SpotifyService(spotifyConfig),
-        ).spotifyLogin(req, res);
+        ).login(req, res);
     });
 
     app.get("/v1/auth/spotify/callback", async (req, res, next) => {
         await new SpotifyAuthController(
             req.logger,
-            new UserService(new UserRepository(req.logger, pool), new LinkedAccountRepository(req.logger, pool)),
+            new UserService(
+                req.logger,
+                new UserRepository(req.logger, pool),
+                new LinkedAccountRepository(req.logger, pool),
+            ),
             new SpotifyService(spotifyConfig),
-        ).spotifyCallback(req, res, next);
+        ).callback(req, res, next);
     });
 
     return app;

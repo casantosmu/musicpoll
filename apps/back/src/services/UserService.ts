@@ -1,4 +1,6 @@
 import { randomUUID } from "node:crypto";
+import type Logger from "@/Logger.js";
+import InternalServerError from "@/errors/InternalServerError.js";
 import type UserRepository from "@/repositories/UserRepository.js";
 import type LinkedAccountRepository from "@/repositories/LinkedAccountRepository.js";
 
@@ -25,20 +27,61 @@ interface CreateUser {
 }
 
 export default class UserService {
+    private readonly logger: Logger;
     private readonly userRepository: UserRepository;
     private readonly linkedAccountRepository: LinkedAccountRepository;
 
-    constructor(userRepository: UserRepository, linkedAccountRepository: LinkedAccountRepository) {
+    constructor(logger: Logger, userRepository: UserRepository, linkedAccountRepository: LinkedAccountRepository) {
+        this.logger = logger.child({ name: this.constructor.name });
         this.userRepository = userRepository;
         this.linkedAccountRepository = linkedAccountRepository;
     }
 
-    async create(data: CreateUser): Promise<User> {
-        const user = {
-            id: randomUUID(),
-            email: data.email,
-        };
-        await this.userRepository.create(user);
+    async upsert(data: CreateUser): Promise<User> {
+        const foundSpotifyAccount = await this.linkedAccountRepository.findByProviderAndProviderUserId(
+            "spotify",
+            data.spotifyAccount.userId,
+        );
+
+        if (foundSpotifyAccount) {
+            const user = await this.userRepository.findById(foundSpotifyAccount.userId);
+            if (!user) {
+                throw new InternalServerError(
+                    `LinkedAccount ${foundSpotifyAccount.id} exists but User ${foundSpotifyAccount.userId} does not`,
+                );
+            }
+
+            this.logger.info(`Updating existing Spotify account ${foundSpotifyAccount.id} for user ${user.id}`);
+            const isUpdated = await this.linkedAccountRepository.update(foundSpotifyAccount.id, {
+                accessToken: data.spotifyAccount.accessToken,
+                refreshToken: data.spotifyAccount.refreshToken,
+                expiresAt: data.spotifyAccount.expiresAt,
+            });
+            if (!isUpdated) {
+                throw new InternalServerError(`Could not update LinkedAccount ${foundSpotifyAccount.id}`);
+            }
+
+            return {
+                id: user.id,
+                email: user.email,
+                spotifyAccount: {
+                    ...foundSpotifyAccount,
+                    accessToken: data.spotifyAccount.accessToken,
+                    refreshToken: data.spotifyAccount.refreshToken,
+                    expiresAt: data.spotifyAccount.expiresAt,
+                },
+            };
+        }
+
+        let user = await this.userRepository.findByEmail(data.email);
+        if (!user) {
+            user = {
+                id: randomUUID(),
+                email: data.email,
+            };
+            this.logger.info(`Creating new user for email ${data.email} with ID: ${user.id}`);
+            await this.userRepository.save(user);
+        }
 
         const spotifyAccount = {
             id: randomUUID(),
@@ -49,11 +92,13 @@ export default class UserService {
             refreshToken: data.spotifyAccount.refreshToken,
             expiresAt: data.spotifyAccount.expiresAt,
         };
-        await this.linkedAccountRepository.create(spotifyAccount);
+        this.logger.info(`Creating new Spotify linked account ${spotifyAccount.id} for user ${user.id}`);
+        await this.linkedAccountRepository.save(spotifyAccount);
 
         return {
-            ...user,
-            spotifyAccount: spotifyAccount,
+            id: user.id,
+            email: user.email,
+            spotifyAccount,
         };
     }
 }
