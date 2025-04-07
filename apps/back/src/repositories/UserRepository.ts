@@ -1,7 +1,7 @@
 import pg from "pg";
 import camelcaseKeys from "camelcase-keys";
-import type Logger from "@/Logger.js";
 import Repository from "@/repositories/Repository.js";
+import type Logger from "@/Logger.js";
 
 interface User {
     id: string;

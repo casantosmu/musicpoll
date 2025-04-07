@@ -12,6 +12,7 @@ import UserRepository from "@/repositories/UserRepository.js";
 import UserService from "@/services/UserService.js";
 import SpotifyService from "@/services/SpotifyService.js";
 import SpotifyAuthController from "@/controllers/SpotifyAuthController.js";
+import UserController from "@/controllers/UserController.js";
 
 interface Parameters {
     logger: Logger;
@@ -36,6 +37,10 @@ export default function app({ logger, pool }: Parameters) {
             },
         }),
     );
+
+    app.get("/v1/users/me", (req, res, next) => {
+        new UserController().me(req, res, next);
+    });
 
     app.get("/v1/auth/spotify/login", (req, res) => {
         new SpotifyAuthController(

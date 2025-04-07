@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 import type Logger from "@/Logger.js";
-import InternalServerError from "@/errors/InternalServerError.js";
 import type UserRepository from "@/repositories/UserRepository.js";
 import type LinkedAccountRepository from "@/repositories/LinkedAccountRepository.js";
+import InternalServerError from "@/errors/InternalServerError.js";
 
 interface User {
     id: string;
