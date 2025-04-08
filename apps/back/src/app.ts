@@ -6,6 +6,7 @@ import type Logger from "@/Logger.js";
 import ServerConfig from "@/config/ServerConfig.js";
 import SpotifyConfig from "@/config/SpotifyConfig.js";
 import reqLog from "@/middlewares/reqLog.js";
+import redirectToLocalhost from "@/middlewares/redirectToLocalhost.js";
 
 import LinkedAccountRepository from "@/repositories/LinkedAccountRepository.js";
 import UserRepository from "@/repositories/UserRepository.js";
@@ -26,6 +27,7 @@ export default function app({ logger, pool }: Parameters) {
     const app = express();
 
     app.use(reqLog(logger));
+    app.use(redirectToLocalhost());
     app.use(
         session({
             store: new (pgSession(session))({ pool }),
