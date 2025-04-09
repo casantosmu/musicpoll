@@ -33,9 +33,12 @@ export default function app({ logger, pool }: Parameters) {
             store: new (pgSession(session))({ pool }),
             secret: serverConfig.cookieSecret,
             resave: false,
+            saveUninitialized: false,
             cookie: {
                 maxAge: serverConfig.cookieMaxAge,
                 secure: serverConfig.cookieSecure,
+                httpOnly: true,
+                sameSite: "strict",
             },
         }),
     );
