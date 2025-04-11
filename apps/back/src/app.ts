@@ -8,12 +8,13 @@ import SpotifyConfig from "@/config/SpotifyConfig.js";
 import reqLog from "@/middlewares/reqLog.js";
 import redirectToLocalhost from "@/middlewares/redirectToLocalhost.js";
 
+import UserController from "@/controllers/UserController.js";
+import AuthController from "@/controllers/AuthController.js";
 import LinkedAccountRepository from "@/repositories/LinkedAccountRepository.js";
 import UserRepository from "@/repositories/UserRepository.js";
 import UserService from "@/services/UserService.js";
 import SpotifyService from "@/services/SpotifyService.js";
 import SpotifyAuthController from "@/controllers/SpotifyAuthController.js";
-import UserController from "@/controllers/UserController.js";
 
 interface Parameters {
     logger: Logger;
@@ -45,6 +46,10 @@ export default function app({ logger, pool }: Parameters) {
 
     app.get("/v1/users/me", (req, res, next) => {
         new UserController().me(req, res, next);
+    });
+
+    app.post("/v1/auth/logout", (req, res, next) => {
+        new AuthController().logout(req, res, next);
     });
 
     app.get("/v1/auth/spotify/login", (req, res) => {
