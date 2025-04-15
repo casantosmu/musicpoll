@@ -1,7 +1,7 @@
 import { PropsWithChildren, useEffect, useState } from "react";
 import AuthContext from "./AuthContext.tsx";
 import User from "./User.ts";
-import ApiUsers from "../../api/users.ts";
+import API from "../../API.ts";
 
 export default function AuthProvider({ children }: PropsWithChildren) {
     const [isLoading, setIsLoading] = useState(true);
@@ -16,7 +16,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     };
 
     useEffect(() => {
-        ApiUsers.me()
+        API.me()
             .then((result) => {
                 if (result.success) {
                     login(result.data);
