@@ -11,6 +11,8 @@ interface LinkedAccount {
     accessToken: string;
     refreshToken: string;
     expiresAt: Date;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export default class LinkedAccountRepository extends Repository<LinkedAccount> {

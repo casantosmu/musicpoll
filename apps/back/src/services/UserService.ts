@@ -13,7 +13,11 @@ interface User {
         accessToken: string;
         refreshToken: string;
         expiresAt: Date;
+        createdAt: Date;
+        updatedAt: Date;
     };
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 interface CreateUser {
@@ -70,6 +74,8 @@ export default class UserService {
                     refreshToken: data.spotifyAccount.refreshToken,
                     expiresAt: data.spotifyAccount.expiresAt,
                 },
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
             };
         }
 
@@ -78,6 +84,8 @@ export default class UserService {
             user = {
                 id: randomUUID(),
                 email: data.email,
+                createdAt: new Date(),
+                updatedAt: new Date(),
             };
             this.logger.info(`Creating new user for email ${data.email} with ID: ${user.id}`);
             await this.userRepository.save(user);
@@ -91,6 +99,8 @@ export default class UserService {
             accessToken: data.spotifyAccount.accessToken,
             refreshToken: data.spotifyAccount.refreshToken,
             expiresAt: data.spotifyAccount.expiresAt,
+            createdAt: new Date(),
+            updatedAt: new Date(),
         };
         this.logger.info(`Creating new Spotify linked account ${spotifyAccount.id} for user ${user.id}`);
         await this.linkedAccountRepository.save(spotifyAccount);
@@ -99,6 +109,8 @@ export default class UserService {
             id: user.id,
             email: user.email,
             spotifyAccount,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
         };
     }
 }

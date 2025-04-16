@@ -6,6 +6,8 @@ import type Logger from "@/Logger.js";
 interface User {
     id: string;
     email: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export default class UserRepository extends Repository<User> {
