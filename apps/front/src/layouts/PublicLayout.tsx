@@ -1,5 +1,5 @@
 import { Navigate, Outlet } from "react-router";
-import useAuth from "../providers/auth/useAuth.ts";
+import useAuth from "@/providers/auth/useAuth.ts";
 
 export default function PublicLayout() {
     const { isLoggedIn, isLoading } = useAuth();

@@ -1,7 +1,7 @@
 import { PropsWithChildren, useEffect, useState } from "react";
-import AuthContext from "./AuthContext.tsx";
-import User from "./User.ts";
-import API from "../../API.ts";
+import API from "@/API.ts";
+import User from "@/providers/auth/User.ts";
+import AuthContext from "@/providers/auth/AuthContext.tsx";
 
 export default function AuthProvider({ children }: PropsWithChildren) {
     const [isLoading, setIsLoading] = useState(true);

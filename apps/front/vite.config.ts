@@ -1,3 +1,4 @@
+import path from "node:path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -12,6 +13,11 @@ export default defineConfig({
                 // changeOrigin: true, // Ensure the request appears to come from the frontend server
                 rewrite: (path) => path.replace(/^\/api/, ""),
             },
+        },
+    },
+    resolve: {
+        alias: {
+            "@": path.resolve(import.meta.dirname, "./src"),
         },
     },
 });

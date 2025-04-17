@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import User from "./User.ts";
+import User from "@/providers/auth/User.ts";
 
 const AuthContext = createContext<{
     user: User | null;

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Navigate, Outlet } from "react-router";
 import { LogOut, Music, Plus, User } from "lucide-react";
-import useAuth from "../providers/auth/useAuth.ts";
-import API from "../API.ts";
-import useOnClickOutside from "../hooks/useOnClickOutside.tsx";
+import API from "@/API.ts";
+import useAuth from "@/providers/auth/useAuth.ts";
+import useOnClickOutside from "@/hooks/useOnClickOutside.tsx";
 
 export default function ProtectedLayout() {
     const { logout, isLoggedIn, isLoading } = useAuth();
