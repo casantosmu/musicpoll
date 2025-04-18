@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate, Outlet } from "react-router";
+import { Link, Navigate, Outlet } from "react-router";
 import { LogOut, Music, Plus, User } from "lucide-react";
 import API from "@/API.ts";
 import useAuth from "@/providers/auth/useAuth.ts";
@@ -44,20 +44,20 @@ export default function ProtectedLayout() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 items-center">
                         {/* Logo */}
-                        <a href="/dashboard" className="flex items-center">
+                        <Link to="/dashboard" className="flex items-center">
                             <Music className="h-8 w-8 text-green-500" />
                             <span className="ml-2 text-xl font-bold hidden sm:block">MusicPolls</span>
-                        </a>
+                        </Link>
 
                         {/* Navigation */}
                         <nav className="flex flex-1 items-center justify-end">
-                            <a
-                                href="/create-poll"
+                            <Link
+                                to="/create-poll"
                                 className="flex items-center px-4 py-2 rounded-full text-sm text-white bg-zinc-700 hover:bg-zinc-600 mr-4"
                             >
                                 <Plus className="h-4 w-4 mr-2" />
                                 Create Poll
-                            </a>
+                            </Link>
                         </nav>
 
                         {/* User Avatar and Dropdown */}
