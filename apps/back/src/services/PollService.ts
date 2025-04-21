@@ -1,0 +1,44 @@
+import { randomUUID } from "node:crypto";
+import type Logger from "@/Logger.js";
+import type PollRepository from "@/repositories/PollRepository.js";
+
+interface Poll {
+    id: string;
+    title: string;
+    description: string | null;
+    allowMultipleOptions: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+interface CreatePoll {
+    title: string;
+    description: string | null;
+    allowMultipleOptions: boolean;
+}
+
+export default class PollService {
+    private readonly logger: Logger;
+    private readonly pollRepository: PollRepository;
+
+    constructor(logger: Logger, pollRepository: PollRepository) {
+        this.logger = logger.child({ name: this.constructor.name });
+        this.pollRepository = pollRepository;
+    }
+
+    async create(data: CreatePoll): Promise<Poll> {
+        const poll = {
+            id: randomUUID(),
+            title: data.title,
+            description: data.description,
+            allowMultipleOptions: data.allowMultipleOptions,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+
+        await this.pollRepository.save(poll);
+
+        this.logger.info(`Poll ${poll.id} created`);
+        return poll;
+    }
+}

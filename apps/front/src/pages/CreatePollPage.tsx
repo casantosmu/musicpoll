@@ -1,12 +1,13 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Loader, Music } from "lucide-react";
+import API from "@/API.ts";
 
 export default function CreatePollPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
         title: "",
         description: "",
-        multipleOptions: false,
+        allowMultipleOptions: false,
     });
 
     const handleOnChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -22,11 +23,22 @@ export default function CreatePollPage() {
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+
         setIsSubmitting(true);
-        setTimeout(() => {
-            console.log(formData);
-            setIsSubmitting(false);
-        }, 1500);
+        API.createPoll({
+            title: formData.title.trim(),
+            description: formData.description.trim() || null,
+            allowMultipleOptions: formData.allowMultipleOptions,
+        })
+            .then((result) => {
+                if (result.success) {
+                    // Redirect!!
+                }
+            })
+            .catch(console.error)
+            .finally(() => {
+                setIsSubmitting(false);
+            });
     };
 
     return (
@@ -73,13 +85,13 @@ export default function CreatePollPage() {
                 <div className="flex items-center">
                     <input
                         type="checkbox"
-                        id="multipleOptions"
-                        name="multipleOptions"
-                        checked={formData.multipleOptions}
+                        id="allowMultipleOptions"
+                        name="allowMultipleOptions"
+                        checked={formData.allowMultipleOptions}
                         onChange={handleOnChange}
                         className="h-5 w-5 accent-green-500"
                     />
-                    <label htmlFor="multipleOptions" className="ml-3 block text-zinc-300">
+                    <label htmlFor="allowMultipleOptions" className="ml-3 block text-zinc-300">
                         Allow selection of multiple options
                     </label>
                 </div>

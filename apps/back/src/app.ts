@@ -8,6 +8,9 @@ import SpotifyConfig from "@/config/SpotifyConfig.js";
 import reqLog from "@/middlewares/reqLog.js";
 import redirectToLocalhost from "@/middlewares/redirectToLocalhost.js";
 
+import PollController from "@/controllers/PollController.js";
+import PollService from "@/services/PollService.js";
+import PollRepository from "@/repositories/PollRepository.js";
 import UserController from "@/controllers/UserController.js";
 import AuthController from "@/controllers/AuthController.js";
 import LinkedAccountRepository from "@/repositories/LinkedAccountRepository.js";
@@ -29,6 +32,7 @@ export default function app({ logger, pool }: Parameters) {
 
     app.use(reqLog(logger));
     app.use(redirectToLocalhost());
+    app.use(express.json());
     app.use(
         session({
             store: new (pgSession(session))({ pool }),
@@ -43,6 +47,14 @@ export default function app({ logger, pool }: Parameters) {
             },
         }),
     );
+
+    app.post("/v1/polls", async (req, res, next) => {
+        await new PollController(new PollService(req.logger, new PollRepository(req.logger, pool))).create(
+            req,
+            res,
+            next,
+        );
+    });
 
     app.get("/v1/users/me", (req, res, next) => {
         new UserController().me(req, res, next);
