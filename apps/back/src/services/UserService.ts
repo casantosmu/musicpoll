@@ -4,30 +4,29 @@ import type UserRepository from "@/repositories/UserRepository.js";
 import type LinkedAccountRepository from "@/repositories/LinkedAccountRepository.js";
 import InternalServerError from "@/errors/InternalServerError.js";
 
-interface User {
-    id: string;
+interface SpotifyAccountBase {
+    userId: string;
+    accessToken: string;
+    refreshToken: string;
+    expiresAt: Date;
+}
+
+interface UserBase {
     email: string;
-    spotifyAccount: {
-        id: string;
-        userId: string;
-        accessToken: string;
-        refreshToken: string;
-        expiresAt: Date;
-        createdAt: Date;
-        updatedAt: Date;
-    };
+    spotifyAccount: SpotifyAccountBase;
+}
+
+interface SpotifyAccount extends SpotifyAccountBase {
+    id: string;
     createdAt: Date;
     updatedAt: Date;
 }
 
-interface CreateUser {
-    email: string;
-    spotifyAccount: {
-        userId: string;
-        accessToken: string;
-        refreshToken: string;
-        expiresAt: Date;
-    };
+interface User extends UserBase {
+    id: string;
+    spotifyAccount: SpotifyAccount;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 export default class UserService {
@@ -41,7 +40,7 @@ export default class UserService {
         this.linkedAccountRepository = linkedAccountRepository;
     }
 
-    async upsert(data: CreateUser): Promise<User> {
+    async upsert(data: UserBase): Promise<User> {
         const foundSpotifyAccount = await this.linkedAccountRepository.findByProviderAndProviderUserId(
             "spotify",
             data.spotifyAccount.userId,

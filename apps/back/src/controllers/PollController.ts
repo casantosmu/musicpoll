@@ -1,9 +1,9 @@
 import type { NextFunction, Request, Response } from "express";
 import type { JSONSchemaType } from "ajv";
-import ajv from "@/ajv.js";
 import type PollService from "@/services/PollService.js";
+import ajv from "@/ajv.js";
 
-const CreatePollBodySchema: JSONSchemaType<{
+const createPollBodySchema: JSONSchemaType<{
     title: string;
     description: string | null;
     allowMultipleOptions: boolean;
@@ -25,7 +25,7 @@ const CreatePollBodySchema: JSONSchemaType<{
     additionalProperties: false,
 };
 
-const createPollBodyValidation = ajv.compile(CreatePollBodySchema);
+const createPollBodyValidation = ajv.compile(createPollBodySchema);
 
 export default class PollController {
     private readonly pollService: PollService;
