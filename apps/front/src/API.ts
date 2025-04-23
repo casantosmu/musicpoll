@@ -85,9 +85,8 @@ const API = {
             };
         }
 
-        const data = (await response.json()) as {
-            id: string;
-            email: string;
+        const { data } = (await response.json()) as {
+            data: { id: string; email: string };
         };
 
         return {

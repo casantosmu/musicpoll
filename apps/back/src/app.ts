@@ -48,16 +48,12 @@ export default function app({ logger, pool }: Parameters) {
         }),
     );
 
-    app.post("/v1/polls", async (req, res, next) => {
-        await new PollController(new PollService(req.logger, new PollRepository(req.logger, pool))).create(
-            req,
-            res,
-            next,
-        );
+    app.post("/v1/polls", async (req, res) => {
+        await new PollController(new PollService(req.logger, new PollRepository(req.logger, pool))).create(req, res);
     });
 
-    app.get("/v1/users/me", (req, res, next) => {
-        new UserController().me(req, res, next);
+    app.get("/v1/users/me", (req, res) => {
+        new UserController().me(req, res);
     });
 
     app.post("/v1/auth/logout", (req, res, next) => {

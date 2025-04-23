@@ -1,12 +1,12 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import UnauthorizedError from "@/errors/UnauthorizedError.js";
 
 export default class UserController {
-    me(req: Request, res: Response, next: NextFunction) {
+    me(req: Request, res: Response) {
         if (!req.session.user) {
-            next(new UnauthorizedError());
-            return;
+            throw new UnauthorizedError();
         }
-        res.status(200).json(req.session.user);
+
+        res.status(200).json({ data: req.session.user });
     }
 }

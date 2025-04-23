@@ -2,14 +2,11 @@ import { randomUUID } from "node:crypto";
 import type Logger from "@/Logger.js";
 import type PollRepository from "@/repositories/PollRepository.js";
 
-interface PollBase {
+interface Poll {
+    id: string;
     title: string;
     description: string | null;
     allowMultipleOptions: boolean;
-}
-
-interface Poll extends PollBase {
-    id: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -23,7 +20,7 @@ export default class PollService {
         this.pollRepository = pollRepository;
     }
 
-    async create(data: PollBase): Promise<Poll> {
+    async create(data: Omit<Poll, "id" | "createdAt" | "updatedAt">): Promise<Poll> {
         const poll = {
             id: randomUUID(),
             title: data.title,

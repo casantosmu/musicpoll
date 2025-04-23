@@ -71,6 +71,9 @@ importers:
       tsx:
         specifier: ^4.19.3
         version: 4.19.3
+      type-fest:
+        specifier: ^4.40.1
+        version: 4.40.1
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -2409,9 +2412,9 @@ packages:
       { integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew== }
     engines: { node: ">= 0.8.0" }
 
-  type-fest@4.40.0:
+  type-fest@4.40.1:
     resolution:
-      { integrity: sha512-ABHZ2/tS2JkvH1PEjxFDTUWC8dB5OsIGZP4IFLhR293GqT5Y5qB1WwL2kMPYhQW9DVgVD8Hd7I8gjwPIf5GFkw== }
+      { integrity: sha512-9YvLNnORDpI+vghLU/Nf+zSv0kL47KbVJ1o3sKgoTefl6i+zebxbiDQWoe/oWWqPhIgQdRZRT1KA9sCPL810SA== }
     engines: { node: ">=16" }
 
   type-is@2.0.1:
@@ -3363,7 +3366,7 @@ snapshots:
       camelcase: 8.0.0
       map-obj: 5.0.0
       quick-lru: 6.1.2
-      type-fest: 4.40.0
+      type-fest: 4.40.1
 
   camelcase@8.0.0: {}
 
@@ -4393,7 +4396,7 @@ snapshots:
     dependencies:
       map-obj: 4.3.0
       snake-case: 3.0.4
-      type-fest: 4.40.0
+      type-fest: 4.40.1
 
   sonic-boom@4.2.0:
     dependencies:
@@ -4472,7 +4475,7 @@ snapshots:
     dependencies:
       prelude-ls: 1.2.1
 
-  type-fest@4.40.0: {}
+  type-fest@4.40.1: {}
 
   type-is@2.0.1:
     dependencies:
