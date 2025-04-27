@@ -4,6 +4,7 @@ import type PollRepository from "@/repositories/PollRepository.js";
 
 interface Poll {
     id: string;
+    userId: string;
     title: string;
     description: string | null;
     allowMultipleOptions: boolean;
@@ -23,6 +24,7 @@ export default class PollService {
     async create(data: Omit<Poll, "id" | "createdAt" | "updatedAt">): Promise<Poll> {
         const poll = {
             id: randomUUID(),
+            userId: data.userId,
             title: data.title,
             description: data.description,
             allowMultipleOptions: data.allowMultipleOptions,

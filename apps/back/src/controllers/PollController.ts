@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import type { JSONSchemaType } from "ajv";
 import type PollService from "@/services/PollService.js";
+import UnauthorizedError from "@/errors/UnauthorizedError.js";
 import ValidationError from "@/errors/ValidationError.js";
 import ajv from "@/ajv.js";
 
@@ -40,7 +41,14 @@ export default class PollController {
             throw new ValidationError(createPollReqBody.errors);
         }
 
-        const poll = await this.pollService.create(req.body);
+        if (!req.session.user) {
+            throw new UnauthorizedError();
+        }
+
+        const poll = await this.pollService.create({
+            ...req.body,
+            userId: req.session.user.id,
+        });
         res.status(201).json({ data: poll });
     }
 }
