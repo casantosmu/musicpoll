@@ -4,6 +4,7 @@ import type Logger from "@/Logger.js";
 
 interface Poll {
     id: string;
+    userId: string;
     title: string;
     description: string | null;
     allowMultipleOptions: boolean;
