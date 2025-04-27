@@ -1,29 +1,23 @@
 import { randomUUID } from "node:crypto";
+import type { OmitDeep } from "type-fest";
 import type Logger from "@/Logger.js";
 import type UserRepository from "@/repositories/UserRepository.js";
 import type LinkedAccountRepository from "@/repositories/LinkedAccountRepository.js";
 import InternalServerError from "@/errors/InternalServerError.js";
 
-interface SpotifyAccountBase {
+interface SpotifyAccount {
+    id: string;
     userId: string;
     accessToken: string;
     refreshToken: string;
     expiresAt: Date;
-}
-
-interface UserBase {
-    email: string;
-    spotifyAccount: SpotifyAccountBase;
-}
-
-interface SpotifyAccount extends SpotifyAccountBase {
-    id: string;
     createdAt: Date;
     updatedAt: Date;
 }
 
-interface User extends UserBase {
+export interface User {
     id: string;
+    email: string;
     spotifyAccount: SpotifyAccount;
     createdAt: Date;
     updatedAt: Date;
@@ -40,7 +34,17 @@ export default class UserService {
         this.linkedAccountRepository = linkedAccountRepository;
     }
 
-    async upsert(data: UserBase): Promise<User> {
+    async upsert(
+        data: OmitDeep<
+            User,
+            | "id"
+            | "createdAt"
+            | "updatedAt"
+            | "spotifyAccount.id"
+            | "spotifyAccount.createdAt"
+            | "spotifyAccount.updatedAt"
+        >,
+    ): Promise<User> {
         const foundSpotifyAccount = await this.linkedAccountRepository.findByProviderAndProviderUserId(
             "spotify",
             data.spotifyAccount.userId,

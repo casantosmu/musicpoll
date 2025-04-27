@@ -1,9 +1,10 @@
-import type { NextFunction, Request, Response } from "express";
+import type { Request, Response } from "express";
 import type { JSONSchemaType } from "ajv";
 import type PollService from "@/services/PollService.js";
+import ValidationError from "@/errors/ValidationError.js";
 import ajv from "@/ajv.js";
 
-const createPollBodySchema: JSONSchemaType<{
+const createPollReqBodySchema: JSONSchemaType<{
     title: string;
     description: string | null;
     allowMultipleOptions: boolean;
@@ -25,7 +26,7 @@ const createPollBodySchema: JSONSchemaType<{
     additionalProperties: false,
 };
 
-const createPollBodyValidation = ajv.compile(createPollBodySchema);
+const createPollReqBody = ajv.compile(createPollReqBodySchema);
 
 export default class PollController {
     private readonly pollService: PollService;
@@ -34,12 +35,12 @@ export default class PollController {
         this.pollService = pollService;
     }
 
-    async create(req: Request, res: Response, next: NextFunction) {
-        if (createPollBodyValidation(req.body)) {
-            const result = await this.pollService.create(req.body);
-            res.status(201).json({ data: result });
-        } else {
-            next(createPollBodyValidation.errors);
+    async create(req: Request, res: Response) {
+        if (!createPollReqBody(req.body)) {
+            throw new ValidationError(createPollReqBody.errors);
         }
+
+        const poll = await this.pollService.create(req.body);
+        res.status(201).json({ data: poll });
     }
 }

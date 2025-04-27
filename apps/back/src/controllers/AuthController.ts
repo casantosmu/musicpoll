@@ -4,8 +4,7 @@ import UnauthorizedError from "@/errors/UnauthorizedError.js";
 export default class AuthController {
     logout(req: Request, res: Response, next: NextFunction) {
         if (!req.session.user) {
-            next(new UnauthorizedError());
-            return;
+            throw new UnauthorizedError();
         }
 
         req.session.destroy((error) => {
