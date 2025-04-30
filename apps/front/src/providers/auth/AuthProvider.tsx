@@ -28,6 +28,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
             });
     }, []);
 
+    // eslint-disable-next-line react-x/no-unstable-context-value
     const value = { user, login, logout, isLoggedIn: !!user, isLoading };
     return <AuthContext value={value}>{children}</AuthContext>;
 }

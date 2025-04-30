@@ -2,6 +2,6 @@ export interface Response<Item> {
     data: Item;
 }
 
-export interface ErrorResponse {
+export interface ResponseError {
     message: string;
 }

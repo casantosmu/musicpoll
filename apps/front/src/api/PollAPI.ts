@@ -1,4 +1,4 @@
-import { ErrorResponse, Response } from "@/api/common";
+import { ResponseError, Response } from "@/api/common";
 
 interface CreatePoll {
     title: string;
@@ -31,7 +31,7 @@ const PollAPI = {
 
             let message = await response.text();
             try {
-                const json = JSON.parse(message) as ErrorResponse;
+                const json = JSON.parse(message) as ResponseError;
                 message = json.message;
             } catch {
                 /* empty */

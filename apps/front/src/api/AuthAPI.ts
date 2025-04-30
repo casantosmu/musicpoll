@@ -1,4 +1,4 @@
-import { ErrorResponse } from "@/api/common";
+import { ResponseError } from "@/api/common";
 
 const AuthAPI = {
     async logout() {
@@ -11,7 +11,7 @@ const AuthAPI = {
 
             let message = await response.text();
             try {
-                const json = JSON.parse(message) as ErrorResponse;
+                const json = JSON.parse(message) as ResponseError;
                 message = json.message;
             } catch {
                 /* empty */
