@@ -1,9 +1,11 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Loader, Music } from "lucide-react";
 import API from "@/API.ts";
+import { useNavigate } from "react-router";
 
 export default function CreatePollPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         title: "",
         description: "",
@@ -32,7 +34,8 @@ export default function CreatePollPage() {
         })
             .then((result) => {
                 if (result.success) {
-                    // Redirect!!
+                    void navigate("/get-poll");
+                    // TODO CONTINUE HERE
                 }
             })
             .catch(console.error)

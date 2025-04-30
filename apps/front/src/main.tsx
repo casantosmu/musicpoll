@@ -10,6 +10,7 @@ import ProtectedLayout from "@/layouts/ProtectedLayout.tsx";
 import HomePage from "@/pages/HomePage.tsx";
 import DashboardPage from "@/pages/DashboardPage.tsx";
 import CreatePollPage from "@/pages/CreatePollPage.tsx";
+import { GetPollPage } from "@/pages/GetPollPage";
 
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 createRoot(document.getElementById("root")!).render(
@@ -24,6 +25,7 @@ createRoot(document.getElementById("root")!).render(
                     <Route element={<ProtectedLayout />}>
                         <Route path="/dashboard" element={<DashboardPage />} />
                         <Route path="/create-poll" element={<CreatePollPage />} />
+                        <Route path="/get-poll" element={<GetPollPage />} />
                     </Route>
 
                     <Route path="*" element={<Navigate to="/" replace />} />
