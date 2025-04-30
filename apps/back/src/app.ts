@@ -1,7 +1,8 @@
+import type { Redis } from "ioredis";
 import pg from "pg";
 import express from "express";
 import session from "express-session";
-import pgSession from "connect-pg-simple";
+import { RedisStore } from "connect-redis";
 import type Logger from "@/Logger.js";
 import ServerConfig from "@/config/ServerConfig.js";
 import SpotifyConfig from "@/config/SpotifyConfig.js";
@@ -22,9 +23,10 @@ import SpotifyAuthController from "@/controllers/SpotifyAuthController.js";
 interface Parameters {
     logger: Logger;
     pool: pg.Pool;
+    redis: Redis;
 }
 
-export default function app({ logger, pool }: Parameters) {
+export default function app({ logger, pool, redis }: Parameters) {
     const serverConfig = new ServerConfig();
     const spotifyConfig = new SpotifyConfig();
 
@@ -35,7 +37,10 @@ export default function app({ logger, pool }: Parameters) {
     app.use(express.json());
     app.use(
         session({
-            store: new (pgSession(session))({ pool }),
+            store: new RedisStore({
+                client: redis,
+                prefix: "musicpoll:session:",
+            }),
             secret: serverConfig.cookieSecret,
             resave: false,
             saveUninitialized: false,

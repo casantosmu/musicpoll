@@ -11,12 +11,12 @@ export const envStr = (name: string, defaultValue?: string) => {
     throw new Error(`${name} env not found`);
 };
 
-export const envNum = (name: string, defaultValue?: number) => {
+export const envInt = (name: string, defaultValue?: number) => {
     const value = envStr(name, defaultValue?.toString());
 
     const numValue = parseInt(value, 10);
     if (Number.isNaN(numValue)) {
-        throw new Error(`${name} env is invalid number`);
+        throw new Error(`${name} env is invalid int`);
     }
 
     return numValue;
