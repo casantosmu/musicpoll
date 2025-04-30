@@ -58,12 +58,14 @@ export default class UserService {
                 );
             }
 
-            this.logger.info(`Updating existing Spotify account ${foundSpotifyAccount.id} for user ${user.id}`);
-            const isUpdated = await this.linkedAccountRepository.update(foundSpotifyAccount.id, {
+            const toUpdate = {
                 accessToken: data.spotifyAccount.accessToken,
                 refreshToken: data.spotifyAccount.refreshToken,
                 expiresAt: data.spotifyAccount.expiresAt,
-            });
+            };
+
+            this.logger.info(`Updating existing Spotify account ${foundSpotifyAccount.id} for user ${user.id}`);
+            const isUpdated = await this.linkedAccountRepository.update(foundSpotifyAccount.id, toUpdate);
             if (!isUpdated) {
                 throw new InternalServerError(`Could not update LinkedAccount ${foundSpotifyAccount.id}`);
             }
@@ -73,9 +75,7 @@ export default class UserService {
                 email: user.email,
                 spotifyAccount: {
                     ...foundSpotifyAccount,
-                    accessToken: data.spotifyAccount.accessToken,
-                    refreshToken: data.spotifyAccount.refreshToken,
-                    expiresAt: data.spotifyAccount.expiresAt,
+                    ...toUpdate,
                 },
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
