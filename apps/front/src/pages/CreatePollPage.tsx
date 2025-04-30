@@ -1,6 +1,6 @@
 import { ChangeEvent, FormEvent, useState } from "react";
 import { Loader, Music } from "lucide-react";
-import API from "@/API.ts";
+import PollAPI from "@/api/PollAPI";
 
 export default function CreatePollPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,7 +25,7 @@ export default function CreatePollPage() {
         event.preventDefault();
 
         setIsSubmitting(true);
-        API.createPoll({
+        PollAPI.createPoll({
             title: formData.title.trim(),
             description: formData.description.trim() || null,
             allowMultipleOptions: formData.allowMultipleOptions,

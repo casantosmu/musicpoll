@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, Navigate, Outlet } from "react-router";
 import { LogOut, Music, Plus, User } from "lucide-react";
-import API from "@/API.ts";
+import AuthAPI from "@/api/AuthAPI";
 import useAuth from "@/providers/auth/useAuth.ts";
 import useOnClickOutside from "@/hooks/useOnClickOutside.tsx";
 
@@ -17,7 +17,7 @@ export default function ProtectedLayout() {
     };
 
     const handleLogout = () => {
-        API.logout()
+        AuthAPI.logout()
             .then((result) => {
                 if (result.success) {
                     logout();

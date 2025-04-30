@@ -1,5 +1,5 @@
 import { PropsWithChildren, useEffect, useState } from "react";
-import API from "@/API.ts";
+import UserAPI from "@/api/UserAPI";
 import User from "@/providers/auth/User.ts";
 import AuthContext from "@/providers/auth/AuthContext.tsx";
 
@@ -16,7 +16,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     };
 
     useEffect(() => {
-        API.me()
+        UserAPI.me()
             .then((result) => {
                 if (result.success) {
                     login(result.data);
