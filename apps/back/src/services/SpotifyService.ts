@@ -1,7 +1,9 @@
+import type Logger from "@/Logger.js";
 import type Cache from "@/Cache.js";
 import type SpotifyConfig from "@/config/SpotifyConfig.js";
-import InternalServerError from "@/errors/InternalServerError.js";
+import type LinkedAccountRepository from "@/repositories/LinkedAccountRepository.js";
 import type { ResultList } from "@/services/common.js";
+import InternalServerError from "@/errors/InternalServerError.js";
 
 interface ImageObject {
     url: string;
@@ -25,21 +27,30 @@ interface TrackObject {
 
 interface SearchSongsParams {
     q: string;
-    accessToken: string;
+    userId: string;
     limit?: number;
     offset?: number;
 }
 
 export default class SpotifyService {
-    private readonly spotifyConfig: SpotifyConfig;
+    private readonly logger: Logger;
     private readonly cache: Cache;
+    private readonly spotifyConfig: SpotifyConfig;
+    private readonly linkedAccountRepository: LinkedAccountRepository;
 
-    constructor(spotifyConfig: SpotifyConfig, cache: Cache) {
-        this.spotifyConfig = spotifyConfig;
+    constructor(
+        logger: Logger,
+        cache: Cache,
+        spotifyConfig: SpotifyConfig,
+        linkedAccountRepository: LinkedAccountRepository,
+    ) {
+        this.logger = logger.child({ name: this.constructor.name });
         this.cache = cache;
+        this.spotifyConfig = spotifyConfig;
+        this.linkedAccountRepository = linkedAccountRepository;
     }
 
-    async searchSongs({ accessToken, q, limit = 25, offset = 0 }: SearchSongsParams) {
+    async searchSongs({ userId, q, limit = 25, offset = 0 }: SearchSongsParams) {
         const urlSearchParams = new URLSearchParams();
         urlSearchParams.set("q", q);
         urlSearchParams.set("type", "track");
@@ -53,6 +64,7 @@ export default class SpotifyService {
             return cached;
         }
 
+        const accessToken = await this.accessToken(userId);
         const response = await fetch(`https://api.spotify.com/v1/search?${urlSearchParams}`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
@@ -166,6 +178,64 @@ export default class SpotifyService {
         return {
             id: data.id,
             email: data.email,
+        };
+    }
+
+    private async accessToken(userId: string) {
+        const linkedAccount = await this.linkedAccountRepository.findSpotifyAccountByUserId(userId);
+        if (!linkedAccount) {
+            throw new InternalServerError(`No Spotify account linked for user ${userId}`);
+        }
+
+        const now = new Date();
+        if (linkedAccount.expiresAt <= now) {
+            this.logger.debug(`Access token expired for ${userId}, refreshing`);
+
+            const tokenResponse = await this.refreshAccessToken(linkedAccount.refreshToken);
+
+            await this.linkedAccountRepository.update(linkedAccount.id, {
+                accessToken: tokenResponse.accessToken,
+                refreshToken: tokenResponse.refreshToken,
+                expiresAt: tokenResponse.expiresAt,
+            });
+
+            return tokenResponse.accessToken;
+        }
+
+        return linkedAccount.accessToken;
+    }
+
+    private async refreshAccessToken(refreshToken: string) {
+        const url = new URL("https://accounts.spotify.com/api/token");
+
+        const body = new URLSearchParams();
+        body.set("grant_type", "refresh_token");
+        body.set("refresh_token", refreshToken);
+
+        const response = await fetch(url, {
+            method: "POST",
+            body,
+            headers: {
+                "content-type": "application/x-www-form-urlencoded",
+                Authorization: `Basic ${Buffer.from(this.spotifyConfig.clientId + ":" + this.spotifyConfig.clientSecret).toString("base64")}`,
+            },
+        });
+
+        if (!response.ok) {
+            const body = await response.text();
+            throw new InternalServerError(`${response.status} ${response.statusText} ${body}`);
+        }
+
+        const data = (await response.json()) as {
+            access_token: string;
+            refresh_token?: string;
+            expires_in: number;
+        };
+
+        return {
+            accessToken: data.access_token,
+            refreshToken: data.refresh_token ?? refreshToken,
+            expiresAt: new Date(Date.now() + (data.expires_in - 60) * 1000),
         };
     }
 }

@@ -50,10 +50,12 @@ export default class SearchController {
             throw new UnauthorizedError();
         }
 
-        const accessToken = req.session.user.spotifyAccount.accessToken;
-        const { q, limit, offset } = req.query;
-
-        const result = await this.spotifyService.searchSongs({ accessToken, q, limit, offset });
+        const result = await this.spotifyService.searchSongs({
+            userId: req.session.user.id,
+            q: req.query.q,
+            limit: req.query.limit,
+            offset: req.query.offset,
+        });
         res.status(200).json(result);
     }
 }

@@ -60,10 +60,14 @@ export default function app({ logger, pool, redis }: Parameters) {
     });
 
     app.get("/v1/songs/search", async (req, res) => {
-        await new SearchController(new SpotifyService(spotifyConfig, new Cache(req.logger, redis))).searchSongs(
-            req,
-            res,
-        );
+        await new SearchController(
+            new SpotifyService(
+                req.logger,
+                new Cache(req.logger, redis),
+                spotifyConfig,
+                new LinkedAccountRepository(req.logger, pool),
+            ),
+        ).searchSongs(req, res);
     });
 
     app.get("/v1/users/me", (req, res) => {
@@ -82,7 +86,12 @@ export default function app({ logger, pool, redis }: Parameters) {
                 new UserRepository(req.logger, pool),
                 new LinkedAccountRepository(req.logger, pool),
             ),
-            new SpotifyService(spotifyConfig, new Cache(req.logger, redis)),
+            new SpotifyService(
+                req.logger,
+                new Cache(req.logger, redis),
+                spotifyConfig,
+                new LinkedAccountRepository(req.logger, pool),
+            ),
         ).login(req, res);
     });
 
@@ -94,7 +103,12 @@ export default function app({ logger, pool, redis }: Parameters) {
                 new UserRepository(req.logger, pool),
                 new LinkedAccountRepository(req.logger, pool),
             ),
-            new SpotifyService(spotifyConfig, new Cache(req.logger, redis)),
+            new SpotifyService(
+                req.logger,
+                new Cache(req.logger, redis),
+                spotifyConfig,
+                new LinkedAccountRepository(req.logger, pool),
+            ),
         ).callback(req, res, next);
     });
 

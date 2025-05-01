@@ -32,4 +32,17 @@ export default class LinkedAccountRepository extends Repository<LinkedAccount> {
 
         return camelcaseKeys(result.rows[0]) as LinkedAccount;
     }
+
+    async findSpotifyAccountByUserId(userId: string) {
+        const result = await this.query("SELECT * FROM linked_accounts WHERE provider = $1 AND user_id = $2 LIMIT 1;", [
+            "spotify",
+            userId,
+        ]);
+
+        if (result.rows.length === 0) {
+            return null;
+        }
+
+        return camelcaseKeys(result.rows[0]) as LinkedAccount;
+    }
 }
