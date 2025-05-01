@@ -4,6 +4,7 @@ interface CreatePoll {
     title: string;
     description: string | null;
     allowMultipleOptions: boolean;
+    songs: string[];
 }
 
 interface Poll {
