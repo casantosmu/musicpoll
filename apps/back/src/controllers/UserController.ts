@@ -1,34 +1,22 @@
 import type { Request, Response } from "express";
-import type { JSONSchemaType } from "ajv";
+import type Validator from "@/Validator.js";
 import type UserService from "@/services/UserService.js";
-import ajv from "@/ajv.js";
 import UnauthorizedError from "@/errors/UnauthorizedError.js";
 import ValidationError from "@/errors/ValidationError.js";
 
-const getUserReqParamsSchema: JSONSchemaType<{ id: string }> = {
-    type: "object",
-    properties: {
-        id: {
-            type: "string",
-            format: "uuid",
-        },
-    },
-    required: ["id"],
-    additionalProperties: false,
-};
-
-const getUserReqParams = ajv.compile(getUserReqParamsSchema);
-
 export default class UserController {
+    private readonly validator: Validator;
     private readonly userService: UserService;
 
-    constructor(userService: UserService) {
+    constructor(validator: Validator, userService: UserService) {
+        this.validator = validator;
         this.userService = userService;
     }
 
     async getById(req: Request, res: Response) {
-        if (!getUserReqParams(req.params)) {
-            throw new ValidationError(getUserReqParams.errors);
+        const validation = this.validator.get("getUserReqParams");
+        if (!validation(req.params)) {
+            throw new ValidationError(validation.errors);
         }
 
         const user = await this.userService.getById(req.params.id);

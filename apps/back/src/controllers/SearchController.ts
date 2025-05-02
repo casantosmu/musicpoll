@@ -1,49 +1,22 @@
 import type { Request, Response } from "express";
-import type { JSONSchemaType } from "ajv";
+import type Validator from "@/Validator.js";
 import type SpotifyService from "@/services/SpotifyService.js";
 import UnauthorizedError from "@/errors/UnauthorizedError.js";
 import ValidationError from "@/errors/ValidationError.js";
-import ajv from "@/ajv.js";
-
-const searchSongsReqQuerySchema: JSONSchemaType<{
-    q: string;
-    limit?: number;
-    offset?: number;
-}> = {
-    type: "object",
-    properties: {
-        q: {
-            type: "string",
-        },
-        limit: {
-            type: "integer",
-            minimum: 0,
-            maximum: 50,
-            nullable: true,
-        },
-        offset: {
-            type: "integer",
-            minimum: 0,
-            maximum: 1000,
-            nullable: true,
-        },
-    },
-    required: ["q"],
-    additionalProperties: false,
-};
-
-const searchSongsReqQuery = ajv.compile(searchSongsReqQuerySchema);
 
 export default class SearchController {
+    private readonly validator: Validator;
     private readonly spotifyService: SpotifyService;
 
-    constructor(spotifyService: SpotifyService) {
+    constructor(validator: Validator, spotifyService: SpotifyService) {
+        this.validator = validator;
         this.spotifyService = spotifyService;
     }
 
     async searchSongs(req: Request, res: Response) {
-        if (!searchSongsReqQuery(req.query)) {
-            throw new ValidationError(searchSongsReqQuery.errors);
+        const validation = this.validator.get("searchSongsReqQuery");
+        if (!validation(req.query)) {
+            throw new ValidationError(validation.errors);
         }
 
         if (!req.session.user) {
