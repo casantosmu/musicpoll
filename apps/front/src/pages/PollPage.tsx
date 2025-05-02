@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import PollAPI, { Poll } from "@/api/PollAPI";
 import UserAPI, { User } from "@/api/UserAPI";
-import { ChevronRight, Share2 } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
 
 export default function PollPage() {
     const [poll, setPoll] = useState<Poll | null>();
@@ -12,9 +12,14 @@ export default function PollPage() {
     const [isGetUserLoading, setIsGetUserLoading] = useState(true);
 
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
 
     const handleOptionSelect = (songId: string) => {
+        if (isSubmitting) {
+            return;
+        }
+
         if (selectedOptions.includes(songId)) {
             setSelectedOptions(selectedOptions.filter((id) => id !== songId));
         } else {
@@ -28,6 +33,25 @@ export default function PollPage() {
             window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
             return;
         }
+
+        setIsSubmitting(true);
+        setError("");
+
+        PollAPI.vote(
+            selectedOptions.map((id) => ({
+                action: "add",
+                pollSongId: id,
+            })),
+        )
+            .then((result) => {
+                if (result.success) {
+                    // redirect!!
+                }
+            })
+            .catch(console.error)
+            .finally(() => {
+                setIsSubmitting(false);
+            });
     };
 
     const { id } = useParams();
@@ -103,7 +127,7 @@ export default function PollPage() {
 
                 {error && <div className="mb-4 p-3 bg-red-900/50 text-red-200 rounded-md">{error}</div>}
 
-                <div className="space-y-3">
+                <div className={`space-y-3 ${isSubmitting ? "opacity-75 pointer-events-none" : ""}`}>
                     {poll.songs.map((song) => (
                         <div
                             key={song.id}
@@ -111,7 +135,7 @@ export default function PollPage() {
                                 selectedOptions.includes(song.id)
                                     ? "bg-green-800/30 border border-green-500"
                                     : "bg-zinc-700/50 hover:bg-zinc-700 border border-transparent"
-                            }`}
+                            } ${isSubmitting ? "cursor-not-allowed" : "cursor-pointer"}`}
                             onClick={() => {
                                 handleOptionSelect(song.id);
                             }}
@@ -132,7 +156,7 @@ export default function PollPage() {
                             </div>
 
                             <div
-                                className={`h-6 w-6 rounded-full border-2 flex items-center justify-center
+                                className={`h-6 w-6 rounded-full border-2 flex items-center justify-center transition-colors
                                             ${
                                                 selectedOptions.includes(song.id)
                                                     ? "border-green-500 bg-green-500/50"
@@ -147,21 +171,29 @@ export default function PollPage() {
                     ))}
                 </div>
                 <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                    <button
-                        type="button"
-                        className="flex items-center justify-center py-2 px-6 bg-zinc-700 hover:bg-zinc-600 rounded-full text-white font-medium transition-colors"
-                    >
-                        Share
-                        <Share2 className="h-4 w-4 ml-2" />
-                    </button>
+                    <span></span>
 
                     <button
                         type="button"
                         onClick={handleVote}
-                        className="flex items-center justify-center py-2 px-6 rounded-full text-white font-medium transition-colors bg-green-600 hover:bg-green-700 cursor-pointer"
+                        disabled={isSubmitting}
+                        className={`flex items-center justify-center py-2 px-6 rounded-full text-white font-medium transition-all ${
+                            isSubmitting
+                                ? "bg-green-700 cursor-not-allowed"
+                                : "bg-green-600 hover:bg-green-700 cursor-pointer"
+                        } min-w-32`}
                     >
-                        Vote
-                        <ChevronRight className="h-4 w-4 ml-1" />
+                        {isSubmitting ? (
+                            <>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                Submitting...
+                            </>
+                        ) : (
+                            <>
+                                Vote
+                                <ChevronRight className="h-4 w-4 ml-1" />
+                            </>
+                        )}
                     </button>
                 </div>
             </div>

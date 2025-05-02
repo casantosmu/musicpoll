@@ -256,12 +256,12 @@ export default function CreatePollPage() {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`flex items-center px-5 py-2.5 bg-green-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300 ${isSubmitting ? "opacity-90 cursor-not-allowed" : "hover:bg-green-700 cursor-pointer"}`}
+                        className={`flex items-center px-5 py-2.5 bg-green-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-300  min-w-32 ${isSubmitting ? "opacity-90 cursor-not-allowed" : "hover:bg-green-700 cursor-pointer"}`}
                     >
                         {isSubmitting ? (
                             <>
                                 <Loader className="h-5 w-5 mr-2 animate-spin" />
-                                Creating....
+                                Creating...
                             </>
                         ) : (
                             <>

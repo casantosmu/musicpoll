@@ -35,6 +35,11 @@ export interface Poll {
     updatedAt: Date;
 }
 
+export interface Vote {
+    pollSongId: string;
+    action: "add";
+}
+
 const PollAPI = {
     async getById(id: string) {
         const response = await fetch(`/api/v1/polls/${id}`, {
@@ -96,6 +101,37 @@ const PollAPI = {
         return {
             success: true as const,
             data,
+        };
+    },
+    async vote(votes: Vote[]) {
+        const response = await fetch("/api/v1/polls/vote", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(votes),
+        });
+
+        if (!response.ok) {
+            const status = response.status;
+
+            let message = await response.text();
+            try {
+                const json = JSON.parse(message) as ResponseError;
+                message = json.message;
+            } catch {
+                /* empty */
+            }
+
+            return {
+                success: false as const,
+                error: { status, message },
+            };
+        }
+
+        return {
+            success: true as const,
+            data: null,
         };
     },
 };
