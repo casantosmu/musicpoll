@@ -18,6 +18,7 @@ interface SpotifyAccount {
 export interface User {
     id: string;
     email: string;
+    displayName: string;
     spotifyAccount: SpotifyAccount;
     createdAt: Date;
     updatedAt: Date;
@@ -73,6 +74,7 @@ export default class UserService {
             return {
                 id: user.id,
                 email: user.email,
+                displayName: user.displayName,
                 spotifyAccount: {
                     ...foundSpotifyAccount,
                     ...toUpdate,
@@ -87,6 +89,7 @@ export default class UserService {
             user = {
                 id: randomUUID(),
                 email: data.email,
+                displayName: data.displayName,
                 createdAt: new Date(),
                 updatedAt: new Date(),
             };
@@ -111,6 +114,7 @@ export default class UserService {
         return {
             id: user.id,
             email: user.email,
+            displayName: user.displayName,
             spotifyAccount,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,

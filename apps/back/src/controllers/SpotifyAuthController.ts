@@ -40,6 +40,7 @@ export default class SpotifyAuthController {
         const me = await this.spotifyService.getMe(tokens.accessToken);
         const user = await this.userService.upsert({
             email: me.email,
+            displayName: me.displayName,
             spotifyAccount: {
                 userId: me.id,
                 accessToken: tokens.accessToken,

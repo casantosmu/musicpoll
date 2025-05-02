@@ -173,11 +173,13 @@ export default class SpotifyService {
         const data = (await response.json()) as {
             id: string;
             email: string;
+            display_name: string /* it's documented as nullable */;
         };
 
         return {
             id: data.id,
             email: data.email,
+            displayName: data.display_name,
         };
     }
 
