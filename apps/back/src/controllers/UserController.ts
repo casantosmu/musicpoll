@@ -7,6 +7,10 @@ export default class UserController {
             throw new UnauthorizedError();
         }
 
-        res.status(200).json({ data: req.session.user });
+        const user = {
+            id: req.session.user.id,
+        };
+
+        res.status(200).json({ data: user });
     }
 }

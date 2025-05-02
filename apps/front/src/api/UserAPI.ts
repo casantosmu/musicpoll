@@ -1,21 +1,7 @@
 import { ResponseError, Response } from "@/api/common";
 
-interface SpotifyAccount {
-    id: string;
-    userId: string;
-    accessToken: string;
-    refreshToken: string;
-    expiresAt: Date;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
 interface User {
     id: string;
-    email: string;
-    spotifyAccount: SpotifyAccount;
-    createdAt: Date;
-    updatedAt: Date;
 }
 
 const UserAPI = {
