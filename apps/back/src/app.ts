@@ -21,6 +21,7 @@ import UserRepository from "@/repositories/UserRepository.js";
 import UserService from "@/services/UserService.js";
 import SpotifyService from "@/services/SpotifyService.js";
 import SpotifyAuthController from "@/controllers/SpotifyAuthController.js";
+import PollSongRepository from "@/repositories/PollSongRepository.js";
 
 interface Parameters {
     logger: Logger;
@@ -56,7 +57,9 @@ export default function app({ logger, pool, redis }: Parameters) {
     );
 
     app.post("/v1/polls", async (req, res) => {
-        await new PollController(new PollService(req.logger, new PollRepository(req.logger, pool))).create(req, res);
+        await new PollController(
+            new PollService(req.logger, new PollRepository(req.logger, pool), new PollSongRepository(req.logger, pool)),
+        ).create(req, res);
     });
 
     app.get("/v1/songs/search", async (req, res) => {

@@ -59,6 +59,37 @@ export default abstract class Repository<Entity> {
         await this.query(sql, values);
     }
 
+    async bulkSave(entities: Entity[]) {
+        if (!entities[0]) {
+            this.logger.debug("bulkSave called with empty array, skipping.");
+            return;
+        }
+
+        const columns = Object.keys(snakecaseKeys(entities[0])).map((key) => `"${key}"`);
+        const placeholders: string[] = [];
+        const values: unknown[] = [];
+        let placeholderIndex = 1;
+
+        entities.forEach((entity) => {
+            const rowPlaceholders: string[] = [];
+
+            // @ts-expect-error expects Record<string, unknown>
+            Object.values(entity).forEach((value) => {
+                values.push(value);
+                rowPlaceholders.push(`$${placeholderIndex++}`);
+            });
+
+            placeholders.push(`(${rowPlaceholders.join(", ")})`);
+        });
+
+        const sql = `
+            INSERT INTO "${this.tableName}" (${columns.join(", ")})
+            VALUES ${placeholders.join(", ")}
+        ;`;
+
+        await this.query(sql, values);
+    }
+
     async update(id: string, props: Partial<Entity>) {
         const updates: string[] = [];
         const values: unknown[] = [];

@@ -4,7 +4,13 @@ interface CreatePoll {
     title: string;
     description: string | null;
     allowMultipleOptions: boolean;
-    songs: string[];
+    songs: {
+        id: string;
+        title: string;
+        artist: string;
+        album: string;
+        albumImg: string;
+    }[];
 }
 
 interface Poll {

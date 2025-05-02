@@ -9,6 +9,7 @@ const createPollReqBodySchema: JSONSchemaType<{
     title: string;
     description: string | null;
     allowMultipleOptions: boolean;
+    songs: { id: string; title: string; artist: string; album: string; albumImg: string }[];
 }> = {
     type: "object",
     properties: {
@@ -22,8 +23,33 @@ const createPollReqBodySchema: JSONSchemaType<{
         allowMultipleOptions: {
             type: "boolean",
         },
+        songs: {
+            type: "array",
+            items: {
+                type: "object",
+                properties: {
+                    id: {
+                        type: "string",
+                    },
+                    title: {
+                        type: "string",
+                    },
+                    artist: {
+                        type: "string",
+                    },
+                    album: {
+                        type: "string",
+                    },
+                    albumImg: {
+                        type: "string",
+                    },
+                },
+                required: ["id", "title", "artist", "album", "albumImg"],
+                additionalProperties: false,
+            },
+        },
     },
-    required: ["title", "description", "allowMultipleOptions"],
+    required: ["title", "description", "allowMultipleOptions", "songs"],
     additionalProperties: false,
 };
 
@@ -47,6 +73,10 @@ export default class PollController {
 
         const poll = await this.pollService.create({
             ...req.body,
+            songs: req.body.songs.map((song) => ({
+                ...song,
+                songId: song.id,
+            })),
             userId: req.session.user.id,
         });
         res.status(201).json({ data: poll });

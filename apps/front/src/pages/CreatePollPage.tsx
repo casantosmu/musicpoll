@@ -9,7 +9,7 @@ interface Song {
     title: string;
     artist: string;
     album: string;
-    albumArt: string;
+    albumImg: string;
 }
 
 interface FormData {
@@ -61,7 +61,7 @@ export default function CreatePollPage() {
             title: formData.title.trim(),
             description: formData.description.trim() || null,
             allowMultipleOptions: formData.allowMultipleOptions,
-            songs: formData.songs.map((song) => song.id),
+            songs: formData.songs,
         })
             .then((result) => {
                 if (result.success) {
@@ -111,7 +111,7 @@ export default function CreatePollPage() {
                         title: item.name,
                         artist: item.artists.map((artist) => artist.name).join(", "),
                         album: item.album.name,
-                        albumArt: item.album.images[0].url,
+                        albumImg: item.album.images[0].url,
                     })),
                 );
             })
@@ -218,7 +218,7 @@ export default function CreatePollPage() {
                                     className="flex justify-between items-center p-3 bg-zinc-800 rounded-lg"
                                 >
                                     <img
-                                        src={song.albumArt}
+                                        src={song.albumImg}
                                         alt={`${song.album} cover`}
                                         className="w-12 h-12 rounded-md mr-3"
                                     />
@@ -326,7 +326,7 @@ export default function CreatePollPage() {
                                         }}
                                     >
                                         <img
-                                            src={song.albumArt}
+                                            src={song.albumImg}
                                             alt={`${song.album} cover`}
                                             className="w-12 h-12 rounded-md mr-3"
                                         />
