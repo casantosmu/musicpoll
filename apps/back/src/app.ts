@@ -22,6 +22,7 @@ import UserService from "@/services/UserService.js";
 import SpotifyService from "@/services/SpotifyService.js";
 import SpotifyAuthController from "@/controllers/SpotifyAuthController.js";
 import PollSongRepository from "@/repositories/PollSongRepository.js";
+import SongVoteRepository from "@/repositories/SongVoteRepository.js";
 
 interface Parameters {
     logger: Logger;
@@ -58,14 +59,35 @@ export default function app({ logger, pool, redis }: Parameters) {
 
     app.get("/v1/polls/:id", async (req, res) => {
         await new PollController(
-            new PollService(req.logger, new PollRepository(req.logger, pool), new PollSongRepository(req.logger, pool)),
+            new PollService(
+                req.logger,
+                new PollRepository(req.logger, pool),
+                new PollSongRepository(req.logger, pool),
+                new SongVoteRepository(req.logger, pool),
+            ),
         ).get(req, res);
     });
 
     app.post("/v1/polls", async (req, res) => {
         await new PollController(
-            new PollService(req.logger, new PollRepository(req.logger, pool), new PollSongRepository(req.logger, pool)),
+            new PollService(
+                req.logger,
+                new PollRepository(req.logger, pool),
+                new PollSongRepository(req.logger, pool),
+                new SongVoteRepository(req.logger, pool),
+            ),
         ).create(req, res);
+    });
+
+    app.post("/v1/polls/vote", async (req, res) => {
+        await new PollController(
+            new PollService(
+                req.logger,
+                new PollRepository(req.logger, pool),
+                new PollSongRepository(req.logger, pool),
+                new SongVoteRepository(req.logger, pool),
+            ),
+        ).vote(req, res);
     });
 
     app.get("/v1/songs/search", async (req, res) => {

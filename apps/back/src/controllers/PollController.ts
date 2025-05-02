@@ -69,6 +69,31 @@ const getPollReqParamsSchema: JSONSchemaType<{ id: string }> = {
 
 const getPollReqParams = ajv.compile(getPollReqParamsSchema);
 
+const voteReqBodySchema: JSONSchemaType<
+    {
+        pollSongId: string;
+        action: "add";
+    }[]
+> = {
+    type: "array",
+    items: {
+        type: "object",
+        properties: {
+            pollSongId: {
+                type: "string",
+            },
+            action: {
+                type: "string",
+                enum: ["add"],
+            },
+        },
+        required: ["pollSongId", "action"],
+        additionalProperties: false,
+    },
+};
+
+const voteReqBody = ajv.compile(voteReqBodySchema);
+
 export default class PollController {
     private readonly pollService: PollService;
 
@@ -103,5 +128,19 @@ export default class PollController {
             userId: req.session.user.id,
         });
         res.status(201).json({ data: poll });
+    }
+
+    async vote(req: Request, res: Response) {
+        if (!voteReqBody(req.body)) {
+            throw new ValidationError(voteReqBody.errors);
+        }
+
+        if (!req.session.user) {
+            throw new UnauthorizedError();
+        }
+
+        await this.pollService.vote(req.session.user.id, req.body);
+
+        res.status(204).end();
     }
 }

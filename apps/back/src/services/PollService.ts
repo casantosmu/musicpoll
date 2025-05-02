@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import type Logger from "@/Logger.js";
 import type PollRepository from "@/repositories/PollRepository.js";
 import type PollSongRepository from "@/repositories/PollSongRepository.js";
+import type SongVoteRepository from "@/repositories/SongVoteRepository.js";
 import NotFoundError from "@/errors/NotFoundError.js";
 
 interface PollSong {
@@ -26,15 +27,27 @@ interface Poll {
     updatedAt: Date;
 }
 
+interface Vote {
+    pollSongId: string;
+    action: "add";
+}
+
 export default class PollService {
     private readonly logger: Logger;
     private readonly pollRepository: PollRepository;
     private readonly pollSongRepository: PollSongRepository;
+    private readonly songVoteRepository: SongVoteRepository;
 
-    constructor(logger: Logger, pollRepository: PollRepository, pollSongRepository: PollSongRepository) {
+    constructor(
+        logger: Logger,
+        pollRepository: PollRepository,
+        pollSongRepository: PollSongRepository,
+        songVoteRepository: SongVoteRepository,
+    ) {
         this.logger = logger.child({ name: this.constructor.name });
         this.pollRepository = pollRepository;
         this.pollSongRepository = pollSongRepository;
+        this.songVoteRepository = songVoteRepository;
     }
 
     async getById(id: string): Promise<Poll> {
@@ -98,5 +111,18 @@ export default class PollService {
 
         this.logger.info(`Poll ${poll.id} created`);
         return { ...poll, songs };
+    }
+
+    async vote(userId: string, votes: Vote[]) {
+        const created = votes.map((vote) => ({
+            id: randomUUID(),
+            pollSongId: vote.pollSongId,
+            userId,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        }));
+
+        await this.songVoteRepository.bulkSave(created);
+        this.logger.info(`Successfully saved ${votes.length} votes.`);
     }
 }
