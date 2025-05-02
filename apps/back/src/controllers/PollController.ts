@@ -82,7 +82,7 @@ export default class PollController {
         }
 
         const poll = await this.pollService.getById(req.params.id);
-        res.status(201).json({ data: poll });
+        res.status(200).json({ data: poll });
     }
 
     async create(req: Request, res: Response) {

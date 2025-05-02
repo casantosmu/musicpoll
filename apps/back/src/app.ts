@@ -80,7 +80,23 @@ export default function app({ logger, pool, redis }: Parameters) {
     });
 
     app.get("/v1/users/me", (req, res) => {
-        new UserController().me(req, res);
+        new UserController(
+            new UserService(
+                req.logger,
+                new UserRepository(req.logger, pool),
+                new LinkedAccountRepository(req.logger, pool),
+            ),
+        ).me(req, res);
+    });
+
+    app.get("/v1/users/:id", async (req, res) => {
+        await new UserController(
+            new UserService(
+                req.logger,
+                new UserRepository(req.logger, pool),
+                new LinkedAccountRepository(req.logger, pool),
+            ),
+        ).getById(req, res);
     });
 
     app.post("/v1/auth/logout", (req, res, next) => {

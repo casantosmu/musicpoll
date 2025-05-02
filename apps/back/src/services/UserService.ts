@@ -4,6 +4,7 @@ import type Logger from "@/Logger.js";
 import type UserRepository from "@/repositories/UserRepository.js";
 import type LinkedAccountRepository from "@/repositories/LinkedAccountRepository.js";
 import InternalServerError from "@/errors/InternalServerError.js";
+import NotFoundError from "@/errors/NotFoundError.js";
 
 interface SpotifyAccount {
     id: string;
@@ -33,6 +34,15 @@ export default class UserService {
         this.logger = logger.child({ name: this.constructor.name });
         this.userRepository = userRepository;
         this.linkedAccountRepository = linkedAccountRepository;
+    }
+
+    async getById(id: string): Promise<Omit<User, "spotifyAccount">> {
+        const user = await this.userRepository.findById(id);
+        if (!user) {
+            throw new NotFoundError();
+        }
+
+        return user;
     }
 
     async upsert(
