@@ -13,18 +13,59 @@ interface CreatePoll {
     }[];
 }
 
-interface Poll {
+interface PollSong {
+    id: string;
+    songId: string;
+    title: string;
+    artist: string;
+    album: string;
+    albumImg: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface Poll {
     id: string;
     userId: string;
     title: string;
     description: string | null;
     allowMultipleOptions: boolean;
+    songs: PollSong[];
     createdAt: Date;
     updatedAt: Date;
 }
 
 const PollAPI = {
-    async createPoll(poll: CreatePoll) {
+    async getById(id: string) {
+        const response = await fetch(`/api/v1/polls/${id}`, {
+            method: "GET",
+        });
+
+        if (!response.ok) {
+            const status = response.status;
+
+            let message = await response.text();
+            try {
+                const json = JSON.parse(message) as ResponseError;
+                message = json.message;
+            } catch {
+                /* empty */
+            }
+
+            return {
+                success: false as const,
+                error: { status, message },
+            };
+        }
+
+        const { data } = (await response.json()) as Response<Poll>;
+
+        return {
+            success: true as const,
+            data,
+        };
+    },
+    async create(poll: CreatePoll) {
         const response = await fetch("/api/v1/polls", {
             method: "POST",
             headers: {

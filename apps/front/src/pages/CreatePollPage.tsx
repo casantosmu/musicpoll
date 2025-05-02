@@ -1,4 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from "react";
+import { useNavigate } from "react-router";
 import ReactModal from "react-modal";
 import { Loader, Music, Plus, Search, X } from "lucide-react";
 import PollAPI from "@/api/PollAPI";
@@ -20,6 +21,8 @@ interface FormData {
 }
 
 export default function CreatePollPage() {
+    const navigate = useNavigate();
+
     const [isAddSongOpen, setIsAddSongOpen] = useState(false);
     const [isSearching, setIsSearching] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
@@ -57,7 +60,7 @@ export default function CreatePollPage() {
         event.preventDefault();
 
         setIsSubmitting(true);
-        PollAPI.createPoll({
+        PollAPI.create({
             title: formData.title.trim(),
             description: formData.description.trim() || null,
             allowMultipleOptions: formData.allowMultipleOptions,
@@ -65,7 +68,7 @@ export default function CreatePollPage() {
         })
             .then((result) => {
                 if (result.success) {
-                    // Redirect!!
+                    void navigate(`/poll/${result.data.id}`);
                 }
             })
             .catch(console.error)
