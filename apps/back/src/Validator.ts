@@ -4,11 +4,11 @@ import addFormats from "ajv-formats";
 export default class Validator {
     private readonly ajv = this.Ajv();
     private readonly validations = {
-        voteReqBody: this.voteReqBody(),
-        getPollReqParams: this.getPollReqParams(),
-        createPollReqBody: this.createPollReqBody(),
-        searchSongsReqQuery: this.searchSongsReqQuery(),
-        getUserReqParams: this.getUserReqParams(),
+        voteReqBody: this.ajv.compile(this.voteReqBody()),
+        getPollReqParams: this.ajv.compile(this.getPollReqParams()),
+        createPollReqBody: this.ajv.compile(this.createPollReqBody()),
+        searchSongsReqQuery: this.ajv.compile(this.searchSongsReqQuery()),
+        getUserReqParams: this.ajv.compile(this.getUserReqParams()),
     };
 
     get<K extends keyof typeof this.validations>(validation: K): (typeof this.validations)[K] {
@@ -23,13 +23,13 @@ export default class Validator {
         return ajv;
     }
 
-    private voteReqBody() {
-        const schema: JSONSchemaType<
-            {
-                pollSongId: string;
-                action: "add";
-            }[]
-        > = {
+    private voteReqBody(): JSONSchemaType<
+        {
+            pollSongId: string;
+            action: "add";
+        }[]
+    > {
+        return {
             type: "array",
             items: {
                 type: "object",
@@ -46,12 +46,12 @@ export default class Validator {
                 additionalProperties: false,
             },
         };
-
-        return this.ajv.compile(schema);
     }
 
-    private getPollReqParams() {
-        const schema: JSONSchemaType<{ id: string }> = {
+    private getPollReqParams(): JSONSchemaType<{
+        id: string;
+    }> {
+        return {
             type: "object",
             properties: {
                 id: {
@@ -62,17 +62,15 @@ export default class Validator {
             required: ["id"],
             additionalProperties: false,
         };
-
-        return this.ajv.compile(schema);
     }
 
-    private createPollReqBody() {
-        const schema: JSONSchemaType<{
-            title: string;
-            description: string | null;
-            allowMultipleOptions: boolean;
-            songs: { id: string; title: string; artist: string; album: string; albumImg: string }[];
-        }> = {
+    private createPollReqBody(): JSONSchemaType<{
+        title: string;
+        description: string | null;
+        allowMultipleOptions: boolean;
+        songs: { id: string; title: string; artist: string; album: string; albumImg: string }[];
+    }> {
+        return {
             type: "object",
             properties: {
                 title: {
@@ -114,16 +112,14 @@ export default class Validator {
             required: ["title", "description", "allowMultipleOptions", "songs"],
             additionalProperties: false,
         };
-
-        return this.ajv.compile(schema);
     }
 
-    private searchSongsReqQuery() {
-        const schema: JSONSchemaType<{
-            q: string;
-            limit?: number;
-            offset?: number;
-        }> = {
+    private searchSongsReqQuery(): JSONSchemaType<{
+        q: string;
+        limit?: number;
+        offset?: number;
+    }> {
+        return {
             type: "object",
             properties: {
                 q: {
@@ -145,12 +141,12 @@ export default class Validator {
             required: ["q"],
             additionalProperties: false,
         };
-
-        return this.ajv.compile(schema);
     }
 
-    private getUserReqParams() {
-        const schema: JSONSchemaType<{ id: string }> = {
+    private getUserReqParams(): JSONSchemaType<{
+        id: string;
+    }> {
+        return {
             type: "object",
             properties: {
                 id: {
@@ -161,7 +157,5 @@ export default class Validator {
             required: ["id"],
             additionalProperties: false,
         };
-
-        return this.ajv.compile(schema);
     }
 }
