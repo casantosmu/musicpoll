@@ -56,6 +56,12 @@ export default function app({ logger, pool, redis }: Parameters) {
         }),
     );
 
+    app.get("/v1/polls/:id", async (req, res) => {
+        await new PollController(
+            new PollService(req.logger, new PollRepository(req.logger, pool), new PollSongRepository(req.logger, pool)),
+        ).get(req, res);
+    });
+
     app.post("/v1/polls", async (req, res) => {
         await new PollController(
             new PollService(req.logger, new PollRepository(req.logger, pool), new PollSongRepository(req.logger, pool)),

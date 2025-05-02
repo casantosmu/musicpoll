@@ -55,11 +55,34 @@ const createPollReqBodySchema: JSONSchemaType<{
 
 const createPollReqBody = ajv.compile(createPollReqBodySchema);
 
+const getPollReqParamsSchema: JSONSchemaType<{ id: string }> = {
+    type: "object",
+    properties: {
+        id: {
+            type: "string",
+            format: "uuid",
+        },
+    },
+    required: ["id"],
+    additionalProperties: false,
+};
+
+const getPollReqParams = ajv.compile(getPollReqParamsSchema);
+
 export default class PollController {
     private readonly pollService: PollService;
 
     constructor(pollService: PollService) {
         this.pollService = pollService;
+    }
+
+    async get(req: Request, res: Response) {
+        if (!getPollReqParams(req.params)) {
+            throw new ValidationError(getPollReqParams.errors);
+        }
+
+        const poll = await this.pollService.getById(req.params.id);
+        res.status(201).json({ data: poll });
     }
 
     async create(req: Request, res: Response) {

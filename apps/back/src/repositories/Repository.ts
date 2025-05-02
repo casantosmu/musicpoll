@@ -4,9 +4,9 @@ import snakecaseKeys from "snakecase-keys";
 import type Logger from "@/Logger.js";
 
 export default abstract class Repository<Entity> {
-    private readonly tableName: string;
     private readonly logger: Logger;
     private readonly pool: pg.Pool;
+    protected tableName: string;
 
     protected constructor(tableName: string, logger: Logger, pool: pg.Pool) {
         this.tableName = tableName;

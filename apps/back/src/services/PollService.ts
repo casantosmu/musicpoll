@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import type Logger from "@/Logger.js";
 import type PollRepository from "@/repositories/PollRepository.js";
 import type PollSongRepository from "@/repositories/PollSongRepository.js";
+import NotFoundError from "@/errors/NotFoundError.js";
 
 interface PollSong {
     id: string;
@@ -34,6 +35,36 @@ export default class PollService {
         this.logger = logger.child({ name: this.constructor.name });
         this.pollRepository = pollRepository;
         this.pollSongRepository = pollSongRepository;
+    }
+
+    async getById(id: string): Promise<Poll> {
+        const poll = await this.pollRepository.findById(id);
+
+        if (!poll) {
+            throw new NotFoundError();
+        }
+
+        const pollSongs = await this.pollSongRepository.findByPollId(id);
+
+        return {
+            id: poll.id,
+            userId: poll.userId,
+            title: poll.title,
+            description: poll.description,
+            allowMultipleOptions: poll.allowMultipleOptions,
+            songs: pollSongs.map((song) => ({
+                id: song.id,
+                songId: song.songId,
+                title: song.title,
+                artist: song.artist,
+                album: song.album,
+                albumImg: song.albumImg,
+                createdAt: song.createdAt,
+                updatedAt: song.updatedAt,
+            })),
+            createdAt: poll.createdAt,
+            updatedAt: poll.updatedAt,
+        };
     }
 
     async create(
