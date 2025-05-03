@@ -12,6 +12,7 @@ import redirectToLocalhost from "@/middlewares/redirectToLocalhost.js";
 import Cache from "@/Cache.js";
 import Validator from "@/Validator.js";
 import type Logger from "@/Logger.js";
+import type Queues from "@/Queues.js";
 
 import PollController from "@/controllers/PollController.js";
 import PollService from "@/services/PollService.js";
@@ -31,9 +32,10 @@ interface Parameters {
     logger: Logger;
     pool: pg.Pool;
     redis: Redis;
+    queues: Queues;
 }
 
-export default function app({ logger, pool, redis }: Parameters) {
+export default function app({ logger, pool, redis, queues }: Parameters) {
     const validator = new Validator();
 
     const appConfig = new AppConfig();
@@ -69,6 +71,7 @@ export default function app({ logger, pool, redis }: Parameters) {
             validator,
             new PollService(
                 req.logger,
+                queues,
                 new PollRepository(req.logger, pool),
                 new PollSongRepository(req.logger, pool),
                 new SongVoteRepository(req.logger, pool),
@@ -81,6 +84,7 @@ export default function app({ logger, pool, redis }: Parameters) {
             validator,
             new PollService(
                 req.logger,
+                queues,
                 new PollRepository(req.logger, pool),
                 new PollSongRepository(req.logger, pool),
                 new SongVoteRepository(req.logger, pool),
@@ -93,6 +97,7 @@ export default function app({ logger, pool, redis }: Parameters) {
             validator,
             new PollService(
                 req.logger,
+                queues,
                 new PollRepository(req.logger, pool),
                 new PollSongRepository(req.logger, pool),
                 new SongVoteRepository(req.logger, pool),

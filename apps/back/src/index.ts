@@ -5,6 +5,7 @@ import PostgresConfig from "@/config/PostgresConfig.js";
 import RedisConfig from "@/config/RedisConfig.js";
 import ServerConfig from "@/config/ServerConfig.js";
 import Logger from "@/Logger.js";
+import Queues from "@/Queues.js";
 import Server from "@/Server.js";
 import app from "@/app.js";
 
@@ -13,9 +14,10 @@ const { port } = new ServerConfig();
 const pool = new pg.Pool(new PostgresConfig());
 const redis = new Redis(new RedisConfig());
 const logger = new Logger(new LoggerConfig());
+const queues = new Queues(logger, new RedisConfig());
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
-const server = new Server(app({ logger, pool, redis }));
+const server = new Server(app({ logger, pool, redis, queues }));
 
 await pool.query("SELECT 1+1");
 logger.info("Successfully connected to Postgres");

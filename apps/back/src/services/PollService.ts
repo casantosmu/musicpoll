@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type Logger from "@/Logger.js";
+import type Queues from "@/Queues.js";
 import type PollRepository from "@/repositories/PollRepository.js";
 import type PollSongRepository from "@/repositories/PollSongRepository.js";
 import type SongVoteRepository from "@/repositories/SongVoteRepository.js";
@@ -34,17 +35,20 @@ interface Vote {
 
 export default class PollService {
     private readonly logger: Logger;
+    private readonly queues: Queues;
     private readonly pollRepository: PollRepository;
     private readonly pollSongRepository: PollSongRepository;
     private readonly songVoteRepository: SongVoteRepository;
 
     constructor(
         logger: Logger,
+        queues: Queues,
         pollRepository: PollRepository,
         pollSongRepository: PollSongRepository,
         songVoteRepository: SongVoteRepository,
     ) {
         this.logger = logger.child({ name: this.constructor.name });
+        this.queues = queues;
         this.pollRepository = pollRepository;
         this.pollSongRepository = pollSongRepository;
         this.songVoteRepository = songVoteRepository;
@@ -121,8 +125,10 @@ export default class PollService {
             createdAt: new Date(),
             updatedAt: new Date(),
         }));
-
         await this.songVoteRepository.bulkSave(created);
-        this.logger.info(`Successfully saved ${votes.length} votes.`);
+        this.logger.info(`Successfully saved ${votes.length} votes`);
+
+        const queue = this.queues.get("updatePlaylist");
+        await queue.addJob({ pollId: "asfa" });
     }
 }

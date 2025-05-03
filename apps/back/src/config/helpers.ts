@@ -1,7 +1,7 @@
 export const envStr = (name: string, defaultValue?: string) => {
     const value = process.env[name];
 
-    if (value !== undefined) {
+    if (value) {
         return value;
     }
     if (defaultValue !== undefined) {
