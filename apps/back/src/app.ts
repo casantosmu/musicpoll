@@ -76,6 +76,12 @@ export default function app({ logger, pool, redis, queues }: Parameters) {
                 new PollSongRepository(req.logger, pool),
                 new SongVoteRepository(req.logger, pool),
             ),
+            new SpotifyService(
+                req.logger,
+                new Cache(req.logger, redis),
+                spotifyConfig,
+                new LinkedAccountRepository(req.logger, pool),
+            ),
         ).get(req, res);
     });
 
@@ -89,6 +95,12 @@ export default function app({ logger, pool, redis, queues }: Parameters) {
                 new PollSongRepository(req.logger, pool),
                 new SongVoteRepository(req.logger, pool),
             ),
+            new SpotifyService(
+                req.logger,
+                new Cache(req.logger, redis),
+                spotifyConfig,
+                new LinkedAccountRepository(req.logger, pool),
+            ),
         ).create(req, res);
     });
 
@@ -101,6 +113,12 @@ export default function app({ logger, pool, redis, queues }: Parameters) {
                 new PollRepository(req.logger, pool),
                 new PollSongRepository(req.logger, pool),
                 new SongVoteRepository(req.logger, pool),
+            ),
+            new SpotifyService(
+                req.logger,
+                new Cache(req.logger, redis),
+                spotifyConfig,
+                new LinkedAccountRepository(req.logger, pool),
             ),
         ).vote(req, res);
     });

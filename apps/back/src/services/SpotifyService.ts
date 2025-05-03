@@ -5,6 +5,16 @@ import type LinkedAccountRepository from "@/repositories/LinkedAccountRepository
 import type { ResultList } from "@/services/common.js";
 import InternalServerError from "@/errors/InternalServerError.js";
 
+interface Paginated<Item> {
+    href: string;
+    limit: number;
+    next: string | null;
+    offset: number;
+    previous: string | null;
+    total: number;
+    items: Item[];
+}
+
 interface ImageObject {
     url: string;
     height: string;
@@ -25,11 +35,26 @@ interface TrackObject {
     }[];
 }
 
+interface PlaylistTrackObject {
+    added_at: string;
+    added_by: {
+        id: string;
+    };
+    track: TrackObject;
+}
+
 interface SearchSongsParams {
     q: string;
     userId: string;
     limit?: number;
     offset?: number;
+}
+
+interface CreatePlaylistParams {
+    userId: string;
+    spotifyUserId: string;
+    name: string;
+    description?: string | null;
 }
 
 export default class SpotifyService {
@@ -77,12 +102,7 @@ export default class SpotifyService {
         }
 
         const json = (await response.json()) as {
-            tracks: {
-                limit: number;
-                offset: number;
-                total: number;
-                items: TrackObject[];
-            };
+            tracks: Paginated<TrackObject>;
         };
 
         const result: ResultList<TrackObject> = {
@@ -114,11 +134,46 @@ export default class SpotifyService {
         return result;
     }
 
+    async createPlaylist({ userId, spotifyUserId, name, description }: CreatePlaylistParams) {
+        const accessToken = await this.accessToken(userId);
+        const response = await fetch(`https://api.spotify.com/v1/users/${spotifyUserId}/playlists`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name,
+                description: description ?? "",
+            }),
+        });
+
+        if (!response.ok) {
+            const body = await response.text();
+            throw new InternalServerError(`${response.status} ${response.statusText} ${body}`);
+        }
+
+        const json = (await response.json()) as {
+            id: string;
+            name: string;
+            description: string | null;
+            tracks: Paginated<PlaylistTrackObject>;
+            external_urls: {
+                spotify: string;
+            };
+            images: ImageObject[];
+        };
+
+        return {
+            id: json.id,
+        };
+    }
+
     buildAuthUrl() {
         const url = new URL("https://accounts.spotify.com/authorize");
         url.searchParams.set("response_type", "code");
         url.searchParams.set("client_id", this.spotifyConfig.clientId);
-        url.searchParams.set("scope", "user-read-email playlist-modify-public");
+        url.searchParams.set("scope", "user-read-email playlist-modify-public playlist-modify-private");
         url.searchParams.set("redirect_uri", this.spotifyConfig.redirectUri);
         return url.toString();
     }
@@ -191,7 +246,7 @@ export default class SpotifyService {
 
         const now = new Date();
         if (linkedAccount.expiresAt <= now) {
-            this.logger.debug(`Access token expired for ${userId}, refreshing`);
+            this.logger.info(`Access token expired for ${userId}, refreshing`);
 
             const tokenResponse = await this.refreshAccessToken(linkedAccount.refreshToken);
 

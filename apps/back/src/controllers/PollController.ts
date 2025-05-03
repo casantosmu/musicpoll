@@ -1,16 +1,19 @@
 import type { Request, Response } from "express";
 import type Validator from "@/Validator.js";
 import type PollService from "@/services/PollService.js";
+import type SpotifyService from "@/services/SpotifyService.js";
 import UnauthorizedError from "@/errors/UnauthorizedError.js";
 import ValidationError from "@/errors/ValidationError.js";
 
 export default class PollController {
     private readonly validator: Validator;
     private readonly pollService: PollService;
+    private readonly spotifyService: SpotifyService;
 
-    constructor(validator: Validator, pollService: PollService) {
+    constructor(validator: Validator, pollService: PollService, spotifyService: SpotifyService) {
         this.validator = validator;
         this.pollService = pollService;
+        this.spotifyService = spotifyService;
     }
 
     async get(req: Request, res: Response) {
@@ -33,13 +36,23 @@ export default class PollController {
             throw new UnauthorizedError();
         }
 
+        const user = req.session.user;
+
+        const playlistResult = await this.spotifyService.createPlaylist({
+            userId: user.id,
+            spotifyUserId: user.spotifyAccount.userId,
+            name: req.body.title,
+            description: req.body.description,
+        });
+
         const poll = await this.pollService.create({
             ...req.body,
             songs: req.body.songs.map((song) => ({
                 ...song,
                 songId: song.id,
             })),
-            userId: req.session.user.id,
+            userId: user.id,
+            spotifyPlaylistId: playlistResult.id,
         });
         res.status(201).json({ data: poll });
     }

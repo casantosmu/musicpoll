@@ -20,6 +20,7 @@ interface PollSong {
 interface Poll {
     id: string;
     userId: string;
+    spotifyPlaylistId: string;
     title: string;
     description: string | null;
     allowMultipleOptions: boolean;
@@ -66,6 +67,7 @@ export default class PollService {
         return {
             id: poll.id,
             userId: poll.userId,
+            spotifyPlaylistId: poll.spotifyPlaylistId,
             title: poll.title,
             description: poll.description,
             allowMultipleOptions: poll.allowMultipleOptions,
@@ -92,6 +94,7 @@ export default class PollService {
         const poll = {
             id: randomUUID(),
             userId: data.userId,
+            spotifyPlaylistId: data.spotifyPlaylistId,
             title: data.title,
             description: data.description,
             allowMultipleOptions: data.allowMultipleOptions,
