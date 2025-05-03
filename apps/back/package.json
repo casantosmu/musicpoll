@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "start": "node --env-file=.env dist/index.js",
     "build": "rm -fr dist && tsc && tsc-alias",
     "dev": "tsx --watch --inspect --env-file=.env src/index.ts | pino-pretty",
     "lint": "eslint .",

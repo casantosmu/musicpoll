@@ -1,17 +1,18 @@
 import type { NextFunction, Request, Response } from "express";
 import type Logger from "@/Logger.js";
+import type AppConfig from "@/config/AppConfig.js";
 import type UserService from "@/services/UserService.js";
 import type SpotifyService from "@/services/SpotifyService.js";
 
-const FRONTEND_BASEURL = "http://localhost:5173";
-
 export default class SpotifyAuthController {
     private readonly logger: Logger;
+    private readonly appConfig: AppConfig;
     private readonly userService: UserService;
     private readonly spotifyService: SpotifyService;
 
-    constructor(logger: Logger, userService: UserService, spotifyService: SpotifyService) {
+    constructor(logger: Logger, appConfig: AppConfig, userService: UserService, spotifyService: SpotifyService) {
         this.logger = logger.child({ name: this.constructor.name });
+        this.appConfig = appConfig;
         this.userService = userService;
         this.spotifyService = spotifyService;
     }
@@ -26,13 +27,13 @@ export default class SpotifyAuthController {
 
         if (typeof error === "string") {
             this.logger.error(`Error received from Spotify authorization: ${error}`);
-            res.redirect(`${FRONTEND_BASEURL}/login?success=false`);
+            res.redirect(`${this.appConfig.frontendBaseUrl}/login?success=false`);
             return;
         }
 
         if (typeof code !== "string") {
             this.logger.error("Unexpected error: Missing code from Spotify authorization");
-            res.redirect(`${FRONTEND_BASEURL}/login?success=false`);
+            res.redirect(`${this.appConfig.frontendBaseUrl}/login?success=false`);
             return;
         }
 
@@ -54,7 +55,7 @@ export default class SpotifyAuthController {
             if (error) {
                 next(error);
             } else {
-                res.redirect(`${FRONTEND_BASEURL}/login?success=true`);
+                res.redirect(`${this.appConfig.frontendBaseUrl}/login?success=true`);
             }
         });
     }

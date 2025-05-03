@@ -3,6 +3,7 @@ import pg from "pg";
 import express from "express";
 import session from "express-session";
 import { RedisStore } from "connect-redis";
+import AppConfig from "@/config/AppConfig.js";
 import ServerConfig from "@/config/ServerConfig.js";
 import SpotifyConfig from "@/config/SpotifyConfig.js";
 import reqLog from "@/middlewares/reqLog.js";
@@ -35,10 +36,12 @@ interface Parameters {
 export default function app({ logger, pool, redis }: Parameters) {
     const validator = new Validator();
 
+    const appConfig = new AppConfig();
     const serverConfig = new ServerConfig();
     const spotifyConfig = new SpotifyConfig();
 
     const app = express();
+    app.set("trust proxy", serverConfig.trustProxy);
 
     app.use(reqLog(logger));
     app.use(redirectToLocalhost());
@@ -61,7 +64,7 @@ export default function app({ logger, pool, redis }: Parameters) {
         }),
     );
 
-    app.get("/v1/polls/:id", async (req, res) => {
+    app.get("/api/v1/polls/:id", async (req, res) => {
         await new PollController(
             validator,
             new PollService(
@@ -73,7 +76,7 @@ export default function app({ logger, pool, redis }: Parameters) {
         ).get(req, res);
     });
 
-    app.post("/v1/polls", async (req, res) => {
+    app.post("/api/v1/polls", async (req, res) => {
         await new PollController(
             validator,
             new PollService(
@@ -85,7 +88,7 @@ export default function app({ logger, pool, redis }: Parameters) {
         ).create(req, res);
     });
 
-    app.post("/v1/polls/vote", async (req, res) => {
+    app.post("/api/v1/polls/vote", async (req, res) => {
         await new PollController(
             validator,
             new PollService(
@@ -97,7 +100,7 @@ export default function app({ logger, pool, redis }: Parameters) {
         ).vote(req, res);
     });
 
-    app.get("/v1/songs/search", async (req, res) => {
+    app.get("/api/v1/songs/search", async (req, res) => {
         await new SearchController(
             validator,
             new SpotifyService(
@@ -109,7 +112,7 @@ export default function app({ logger, pool, redis }: Parameters) {
         ).searchSongs(req, res);
     });
 
-    app.get("/v1/users/me", (req, res) => {
+    app.get("/api/v1/users/me", (req, res) => {
         new UserController(
             validator,
             new UserService(
@@ -120,7 +123,7 @@ export default function app({ logger, pool, redis }: Parameters) {
         ).me(req, res);
     });
 
-    app.get("/v1/users/:id", async (req, res) => {
+    app.get("/api/v1/users/:id", async (req, res) => {
         await new UserController(
             validator,
             new UserService(
@@ -131,13 +134,14 @@ export default function app({ logger, pool, redis }: Parameters) {
         ).getById(req, res);
     });
 
-    app.post("/v1/auth/logout", (req, res, next) => {
+    app.post("/api/v1/auth/logout", (req, res, next) => {
         new AuthController().logout(req, res, next);
     });
 
-    app.get("/v1/auth/spotify/login", (req, res) => {
+    app.get("/api/v1/auth/spotify/login", (req, res) => {
         new SpotifyAuthController(
             req.logger,
+            appConfig,
             new UserService(
                 req.logger,
                 new UserRepository(req.logger, pool),
@@ -152,9 +156,10 @@ export default function app({ logger, pool, redis }: Parameters) {
         ).login(req, res);
     });
 
-    app.get("/v1/auth/spotify/callback", async (req, res, next) => {
+    app.get("/api/v1/auth/spotify/callback", async (req, res, next) => {
         await new SpotifyAuthController(
             req.logger,
+            appConfig,
             new UserService(
                 req.logger,
                 new UserRepository(req.logger, pool),
