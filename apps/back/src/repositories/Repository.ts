@@ -14,10 +14,11 @@ export default abstract class Repository<Entity> {
         this.pool = pool;
     }
 
-    protected async query(text: string, params?: unknown[]) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    protected async query<Row extends pg.QueryResultRow = any>(text: string, params?: unknown[]) {
         const start = Date.now();
         try {
-            const result = await this.pool.query(text, params);
+            const result = await this.pool.query<Row>(text, params);
             const duration = Date.now() - start;
             this.logger.debug("Executed query", { text, duration, rows: result.rowCount });
             return result;
@@ -37,6 +38,12 @@ export default abstract class Repository<Entity> {
         }
 
         return camelcaseKeys(result.rows[0]) as Entity;
+    }
+
+    async exists(id: string) {
+        const sql = `SELECT EXISTS(SELECT 1 FROM "${this.tableName}" WHERE id = $1);`;
+        const result = await this.query(sql, [id]);
+        return (result.rows[0] as { exists: boolean }).exists;
     }
 
     async save(props: Entity) {
