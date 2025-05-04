@@ -24,4 +24,37 @@ export default class PollSongRepository extends Repository<PollSong> {
         const result = await this.query(`SELECT * FROM ${this.tableName} WHERE poll_id = $1;`, [pollId]);
         return camelcaseKeys(result.rows) as PollSong[];
     }
+
+    async countVotesByPollId(pollId: string) {
+        const votesSql = `
+            SELECT count(sv.poll_song_id)::int as count, ps.title, ps.artist, ps.album, ps.album_img
+            FROM ${this.tableName} ps
+            LEFT JOIN song_votes sv ON ps.id = sv.poll_song_id
+            WHERE ps.poll_id = $1
+            GROUP BY ps.title, ps.artist, ps.album, ps.album_img
+            ORDER BY count DESC;
+        `;
+
+        const votes = await this.query<{
+            count: number;
+            title: string;
+            artist: string;
+            album: string;
+            album_img: string;
+        }>(votesSql, [pollId]);
+
+        const totalVotesSql = `
+            SELECT count(*)::int as count
+            FROM ${this.tableName} ps
+            JOIN song_votes sv ON ps.id = sv.poll_song_id
+            WHERE ps.poll_id = $1;
+        `;
+
+        const totalVotes = await this.query(totalVotesSql, [pollId]);
+
+        return {
+            votes: camelcaseKeys(votes.rows),
+            totalVotes: (totalVotes.rows[0] as { count: number }).count,
+        };
+    }
 }

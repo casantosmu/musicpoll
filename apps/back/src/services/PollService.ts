@@ -134,4 +134,13 @@ export default class PollService {
         const queue = this.queues.get("updatePlaylist");
         await queue.addJob({ pollId: "asfa" });
     }
+
+    async getResultByPollId(pollId: string) {
+        const exists = await this.pollRepository.exists(pollId);
+        if (!exists) {
+            throw new NotFoundError();
+        }
+
+        return this.pollSongRepository.countVotesByPollId(pollId);
+    }
 }

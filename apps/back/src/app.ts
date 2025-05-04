@@ -123,6 +123,25 @@ export default function app({ logger, pool, redis, queues }: Parameters) {
         ).vote(req, res);
     });
 
+    app.get("/api/v1/polls/:id/results", async (req, res) => {
+        await new PollController(
+            validator,
+            new PollService(
+                req.logger,
+                queues,
+                new PollRepository(req.logger, pool),
+                new PollSongRepository(req.logger, pool),
+                new SongVoteRepository(req.logger, pool),
+            ),
+            new SpotifyService(
+                req.logger,
+                new Cache(req.logger, redis),
+                spotifyConfig,
+                new LinkedAccountRepository(req.logger, pool),
+            ),
+        ).result(req, res);
+    });
+
     app.get("/api/v1/songs/search", async (req, res) => {
         await new SearchController(
             validator,

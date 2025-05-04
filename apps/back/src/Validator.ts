@@ -9,6 +9,7 @@ export default class Validator {
         createPollReqBody: this.ajv.compile(this.createPollReqBody()),
         searchSongsReqQuery: this.ajv.compile(this.searchSongsReqQuery()),
         getUserReqParams: this.ajv.compile(this.getUserReqParams()),
+        getPollResultReqParams: this.ajv.compile(this.getPollResultReqParams()),
     };
 
     get<K extends keyof typeof this.validations>(validation: K): (typeof this.validations)[K] {
@@ -144,6 +145,22 @@ export default class Validator {
     }
 
     private getUserReqParams(): JSONSchemaType<{
+        id: string;
+    }> {
+        return {
+            type: "object",
+            properties: {
+                id: {
+                    type: "string",
+                    format: "uuid",
+                },
+            },
+            required: ["id"],
+            additionalProperties: false,
+        };
+    }
+
+    private getPollResultReqParams(): JSONSchemaType<{
         id: string;
     }> {
         return {

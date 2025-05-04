@@ -71,4 +71,15 @@ export default class PollController {
 
         res.status(204).end();
     }
+
+    async result(req: Request, res: Response) {
+        const validation = this.validator.get("getPollResultReqParams");
+        if (!validation(req.params)) {
+            throw new ValidationError(validation.errors);
+        }
+
+        const result = await this.pollService.getResultByPollId(req.params.id);
+
+        res.status(200).json({ data: result });
+    }
 }
