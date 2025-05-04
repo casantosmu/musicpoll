@@ -27,22 +27,13 @@ export default class PollSongRepository extends Repository<PollSong> {
 
     async countVotesByPollId(pollId: string) {
         const votesSql = `
-            SELECT count(sv.poll_song_id)::int as count, ps.title, ps.artist, ps.album, ps.album_img
+            SELECT count(sv.poll_song_id)::int as count, ps.id, ps.song_id, ps.title, ps.artist, ps.album, ps.album_img
             FROM ${this.tableName} ps
             LEFT JOIN song_votes sv ON ps.id = sv.poll_song_id
             WHERE ps.poll_id = $1
-            GROUP BY ps.title, ps.artist, ps.album, ps.album_img
+            GROUP BY ps.id, ps.song_id, ps.title, ps.artist, ps.album, ps.album_img
             ORDER BY count DESC;
         `;
-
-        const votes = await this.query<{
-            count: number;
-            title: string;
-            artist: string;
-            album: string;
-            album_img: string;
-        }>(votesSql, [pollId]);
-
         const totalVotesSql = `
             SELECT count(*)::int as count
             FROM ${this.tableName} ps
@@ -50,10 +41,21 @@ export default class PollSongRepository extends Repository<PollSong> {
             WHERE ps.poll_id = $1;
         `;
 
-        const totalVotes = await this.query(totalVotesSql, [pollId]);
+        const [votes, totalVotes] = await Promise.all([
+            this.query(votesSql, [pollId]),
+            this.query(totalVotesSql, [pollId]),
+        ]);
 
         return {
-            votes: camelcaseKeys(votes.rows),
+            votes: camelcaseKeys(votes.rows) as {
+                count: number;
+                id: string;
+                songId: string;
+                title: string;
+                artist: string;
+                album: string;
+                albumImg: string;
+            }[],
             totalVotes: (totalVotes.rows[0] as { count: number }).count,
         };
     }
