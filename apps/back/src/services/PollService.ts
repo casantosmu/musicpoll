@@ -131,16 +131,13 @@ export default class PollService {
         await this.songVoteRepository.bulkSave(created);
         this.logger.info(`Successfully saved ${votes.length} votes`);
 
+        const pollIds = await this.pollSongRepository.getDistinctPollIdsByIds(votes.map((v) => v.pollSongId));
+        this.logger.info(`Adding ${pollIds.length} jobs to update playlists for polls: ${pollIds.join(", ")}`);
         const queue = this.queues.get("updatePlaylist");
-        await queue.addJob({ pollId: "asfa" });
+        await queue.addJobs(pollIds.map((pollId) => ({ pollId })));
     }
 
-    async getResultByPollId(pollId: string) {
-        const exists = await this.pollRepository.exists(pollId);
-        if (!exists) {
-            throw new NotFoundError();
-        }
-
-        return this.pollSongRepository.countVotesByPollId(pollId);
+    async getResultByPollId(pollId: string, options?: { limit: number }) {
+        return this.pollSongRepository.countVotesByPollId(pollId, options);
     }
 }

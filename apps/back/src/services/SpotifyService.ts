@@ -57,6 +57,12 @@ interface CreatePlaylistParams {
     description?: string | null;
 }
 
+interface ReplacePlaylistItemsParams {
+    userId: string;
+    spotifyPlaylistId: string;
+    trackIds: string[];
+}
+
 export default class SpotifyService {
     private readonly logger: Logger;
     private readonly cache: Cache;
@@ -167,6 +173,25 @@ export default class SpotifyService {
         return {
             id: json.id,
         };
+    }
+
+    async replacePlaylistItems({ userId, spotifyPlaylistId, trackIds }: ReplacePlaylistItemsParams) {
+        const accessToken = await this.accessToken(userId);
+        const response = await fetch(`https://api.spotify.com/v1/playlists/${spotifyPlaylistId}/tracks`, {
+            method: "PUT",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                uris: trackIds.map((id) => `spotify:track:${id}`),
+            }),
+        });
+
+        if (!response.ok) {
+            const body = await response.text();
+            throw new InternalServerError(`${response.status} ${response.statusText} ${body}`);
+        }
     }
 
     buildAuthUrl() {

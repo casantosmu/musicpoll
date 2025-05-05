@@ -73,4 +73,19 @@ export default class PollSongRepository extends Repository<PollSong> {
             },
         };
     }
+
+    async getDistinctPollIdsByIds(pollSongIds: string[]) {
+        if (!pollSongIds.length) {
+            return [];
+        }
+
+        const sql = `
+            SELECT DISTINCT ps.poll_id
+            FROM poll_songs ps
+            WHERE ps.id = ANY($1::uuid[]);
+        `;
+
+        const result = await this.query<{ poll_id: string }>(sql, [pollSongIds]);
+        return result.rows.map((row) => row.poll_id);
+    }
 }

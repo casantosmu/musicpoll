@@ -30,8 +30,22 @@ export default class UpdatePlaylistWorker {
         await this.worker.close();
     }
 
-    // eslint-disable-next-line @typescript-eslint/require-await
     private async process(job: Job<UpdatePlaylistData>) {
         this.logger.info(`Processing job for poll ID: ${job.data.pollId}`);
+
+        const poll = await this.pollService.getById(job.data.pollId);
+        this.logger.debug(`Retrieved poll: ${poll.id}, playlist: ${poll.spotifyPlaylistId}`);
+
+        const votesResult = await this.pollService.getResultByPollId(poll.id, {
+            limit: 100,
+        });
+        this.logger.debug(`Retrieved ${votesResult.votes.length} songs with votes for poll: ${poll.id}`);
+
+        await this.spotifyService.replacePlaylistItems({
+            userId: poll.userId,
+            spotifyPlaylistId: poll.spotifyPlaylistId,
+            trackIds: votesResult.votes.map((vote) => vote.songId),
+        });
+        this.logger.info(`Successfully updated playlist ${poll.spotifyPlaylistId} for poll: ${poll.id}`);
     }
 }
