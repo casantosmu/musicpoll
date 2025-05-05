@@ -43,6 +43,7 @@ export default class PollController {
             spotifyUserId: user.spotifyAccount.userId,
             name: req.body.title,
             description: req.body.description,
+            trackIds: req.body.songs.map((song) => song.id),
         });
 
         const poll = await this.pollService.create({

@@ -55,6 +55,7 @@ interface CreatePlaylistParams {
     spotifyUserId: string;
     name: string;
     description?: string | null;
+    trackIds?: string[];
 }
 
 interface ReplacePlaylistItemsParams {
@@ -140,7 +141,7 @@ export default class SpotifyService {
         return result;
     }
 
-    async createPlaylist({ userId, spotifyUserId, name, description }: CreatePlaylistParams) {
+    async createPlaylist({ userId, spotifyUserId, name, description, trackIds }: CreatePlaylistParams) {
         const accessToken = await this.accessToken(userId);
         const response = await fetch(`https://api.spotify.com/v1/users/${spotifyUserId}/playlists`, {
             method: "POST",
@@ -170,9 +171,36 @@ export default class SpotifyService {
             images: ImageObject[];
         };
 
+        if (trackIds) {
+            await this.addPlaylistItems({
+                userId,
+                spotifyPlaylistId: json.id,
+                trackIds,
+            });
+        }
+
         return {
             id: json.id,
         };
+    }
+
+    async addPlaylistItems({ userId, spotifyPlaylistId, trackIds }: ReplacePlaylistItemsParams) {
+        const accessToken = await this.accessToken(userId);
+        const response = await fetch(`https://api.spotify.com/v1/playlists/${spotifyPlaylistId}/tracks`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                uris: trackIds.map((id) => `spotify:track:${id}`),
+            }),
+        });
+
+        if (!response.ok) {
+            const body = await response.text();
+            throw new InternalServerError(`${response.status} ${response.statusText} ${body}`);
+        }
     }
 
     async replacePlaylistItems({ userId, spotifyPlaylistId, trackIds }: ReplacePlaylistItemsParams) {
