@@ -16,7 +16,6 @@ interface Song {
 interface FormData {
     title: string;
     description: string;
-    allowMultipleOptions: boolean;
     songs: Song[];
 }
 
@@ -34,7 +33,6 @@ export default function CreatePollPage() {
     const [formData, setFormData] = useState<FormData>({
         title: "",
         description: "",
-        allowMultipleOptions: false,
         songs: [],
     });
 
@@ -63,7 +61,6 @@ export default function CreatePollPage() {
         PollAPI.create({
             title: formData.title.trim(),
             description: formData.description.trim() || null,
-            allowMultipleOptions: formData.allowMultipleOptions,
             songs: formData.songs,
         })
             .then((result) => {
@@ -184,20 +181,6 @@ export default function CreatePollPage() {
                         placeholder="Add additional information about this poll..."
                         className="w-full px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600 text-white"
                     />
-                </div>
-
-                <div className="flex items-center">
-                    <input
-                        type="checkbox"
-                        id="allowMultipleOptions"
-                        name="allowMultipleOptions"
-                        checked={formData.allowMultipleOptions}
-                        onChange={handleOnChange}
-                        className="h-5 w-5 accent-green-500"
-                    />
-                    <label htmlFor="allowMultipleOptions" className="ml-3 block text-zinc-300">
-                        Allow selection of multiple options
-                    </label>
                 </div>
 
                 <div className="space-y-3 pt-4">

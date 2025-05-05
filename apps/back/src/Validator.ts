@@ -68,7 +68,6 @@ export default class Validator {
     private createPollReqBody(): JSONSchemaType<{
         title: string;
         description: string | null;
-        allowMultipleOptions: boolean;
         songs: { id: string; title: string; artist: string; album: string; albumImg: string }[];
     }> {
         return {
@@ -80,9 +79,6 @@ export default class Validator {
                 description: {
                     type: "string",
                     nullable: true,
-                },
-                allowMultipleOptions: {
-                    type: "boolean",
                 },
                 songs: {
                     type: "array",
@@ -110,7 +106,7 @@ export default class Validator {
                     },
                 },
             },
-            required: ["title", "description", "allowMultipleOptions", "songs"],
+            required: ["title", "description", "songs"],
             additionalProperties: false,
         };
     }

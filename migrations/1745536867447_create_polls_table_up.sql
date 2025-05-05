@@ -5,7 +5,6 @@ CREATE TABLE polls
     spotify_playlist_id    varchar                                            not null,
     title                  varchar                                            not null,
     description            varchar,
-    allow_multiple_options boolean                                            not null,
     created_at             timestamp with time zone default current_timestamp not null,
     updated_at             timestamp with time zone default current_timestamp not null
 );

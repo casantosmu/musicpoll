@@ -3,7 +3,6 @@ import { ResponseError, Response } from "@/api/common";
 interface CreatePoll {
     title: string;
     description: string | null;
-    allowMultipleOptions: boolean;
     songs: {
         id: string;
         title: string;
@@ -29,7 +28,6 @@ export interface Poll {
     userId: string;
     title: string;
     description: string | null;
-    allowMultipleOptions: boolean;
     songs: PollSong[];
     createdAt: Date;
     updatedAt: Date;

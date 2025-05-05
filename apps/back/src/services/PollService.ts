@@ -23,7 +23,6 @@ interface Poll {
     spotifyPlaylistId: string;
     title: string;
     description: string | null;
-    allowMultipleOptions: boolean;
     songs: PollSong[];
     createdAt: Date;
     updatedAt: Date;
@@ -70,7 +69,6 @@ export default class PollService {
             spotifyPlaylistId: poll.spotifyPlaylistId,
             title: poll.title,
             description: poll.description,
-            allowMultipleOptions: poll.allowMultipleOptions,
             songs: pollSongs.map((song) => ({
                 id: song.id,
                 spotifySongId: song.spotifySongId,
@@ -97,7 +95,6 @@ export default class PollService {
             spotifyPlaylistId: data.spotifyPlaylistId,
             title: data.title,
             description: data.description,
-            allowMultipleOptions: data.allowMultipleOptions,
             createdAt: new Date(),
             updatedAt: new Date(),
         };

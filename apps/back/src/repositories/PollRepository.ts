@@ -8,7 +8,6 @@ interface Poll {
     spotifyPlaylistId: string;
     title: string;
     description: string | null;
-    allowMultipleOptions: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
