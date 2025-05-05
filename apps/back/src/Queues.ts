@@ -9,7 +9,7 @@ export default class Queues {
 
     constructor(logger: Logger, redisConfig: RedisConfig) {
         this.queues = {
-            updatePlaylist: new UpdatePlaylistQueue(logger, redisConfig, "updatePlaylist"),
+            updatePlaylist: new UpdatePlaylistQueue(redisConfig),
         };
     }
 

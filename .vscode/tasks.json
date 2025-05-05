@@ -1,0 +1,33 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "dev:front",
+      "type": "shell",
+      "command": "pnpm run dev:front",
+      "presentation": { "panel": "new", "group": "dev" }
+    },
+    {
+      "label": "dev:back",
+      "type": "shell",
+      "command": "pnpm run dev:back",
+      "presentation": { "panel": "new", "group": "dev" }
+    },
+    {
+      "label": "dev:workers",
+      "type": "shell",
+      "command": "pnpm run dev:workers",
+      "presentation": { "panel": "new", "group": "dev" }
+    },
+    {
+      "label": "Start All Dev",
+      "dependsOn": ["dev:front", "dev:back", "dev:workers"],
+      "dependsOrder": "parallel",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    }
+  ]
+}

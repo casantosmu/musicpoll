@@ -5,5 +5,5 @@
   "editor.formatOnSave": true, // Tell VSCode to format files on save
   "editor.defaultFormatter": "esbenp.prettier-vscode", // Tell VSCode to use Prettier as default file formatter,
   "typescript.preferences.importModuleSpecifier": "non-relative",
-  "cSpell.words": ["autorun", "bullmq", "cloudflare", "musicpoll", "redis", "snakecase", "spotify"]
+  "cSpell.words": ["autorun", "bullmq", "cloudflare", "migrix", "musicpoll", "redis", "snakecase", "spotify"]
 }

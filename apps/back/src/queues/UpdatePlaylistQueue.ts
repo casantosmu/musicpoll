@@ -1,12 +1,17 @@
-import type { Job } from "bullmq";
-import Queue from "@/queues/Queue.js";
+import type RedisConfig from "@/config/RedisConfig.js";
+import { Queue } from "bullmq";
+import { UPDATE_PLAYLIST_NAME, type UpdatePlaylistData } from "@/queues/UpdatePlaylist.js";
 
-interface JobData {
-    pollId: string;
-}
+export default class UpdatePlaylistQueue {
+    private readonly queue: Queue;
 
-export default class UpdatePlaylistQueue extends Queue<JobData> {
-    async addJob(data: JobData) {
+    constructor(redisConfig: RedisConfig) {
+        this.queue = new Queue(UPDATE_PLAYLIST_NAME, {
+            connection: redisConfig,
+        });
+    }
+
+    async addJob(data: UpdatePlaylistData) {
         await this.queue.add(`update_playlist_from_poll_${data.pollId}`, data, {
             removeOnComplete: 1000,
             removeOnFail: 5000,
@@ -18,10 +23,5 @@ export default class UpdatePlaylistQueue extends Queue<JobData> {
                 delay: 1000,
             },
         });
-    }
-
-    // eslint-disable-next-line @typescript-eslint/require-await
-    protected async process(job: Job<JobData>) {
-        console.log("processing", job.data.pollId);
     }
 }

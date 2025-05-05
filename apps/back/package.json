@@ -4,9 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "node --env-file=.env dist/index.js",
+    "start": "node --env-file=.env dist/index.app.js",
     "build": "rm -fr dist && tsc && tsc-alias",
-    "dev": "tsx --watch --inspect --env-file=.env src/index.ts | pino-pretty",
+    "dev:app": "tsx --watch --inspect --env-file=.env src/index.app.ts | pino-pretty",
+    "dev:workers": "tsx --watch --inspect --env-file=.env src/index.workers.ts | pino-pretty",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },

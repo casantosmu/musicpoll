@@ -3,7 +3,9 @@
   "private": true,
   "scripts": {
     "build": "pnpm -r build",
-    "dev": "pnpm -r dev",
+    "dev:front": "pnpm --filter front dev",
+    "dev:back": "pnpm --filter back dev:app",
+    "dev:workers": "pnpm --filter back dev:workers",
     "format": "prettier --write .",
     "lint": "pnpm -r lint",
     "test": "pnpm -r test",
