@@ -3,6 +3,11 @@ import camelcaseKeys from "camelcase-keys";
 import snakecaseKeys from "snakecase-keys";
 import type Logger from "@/Logger.js";
 
+export interface Pagination {
+    limit?: number;
+    offset?: number;
+}
+
 export default abstract class Repository<Entity> {
     private readonly logger: Logger;
     private readonly pool: pg.Pool;
