@@ -8,7 +8,7 @@ import NotFoundError from "@/errors/NotFoundError.js";
 
 interface PollSong {
     id: string;
-    songId: string;
+    spotifySongId: string;
     title: string;
     artist: string;
     album: string;
@@ -73,7 +73,7 @@ export default class PollService {
             allowMultipleOptions: poll.allowMultipleOptions,
             songs: pollSongs.map((song) => ({
                 id: song.id,
-                songId: song.songId,
+                spotifySongId: song.spotifySongId,
                 title: song.title,
                 artist: song.artist,
                 album: song.album,
@@ -105,7 +105,7 @@ export default class PollService {
 
         const songs = data.songs.map((song) => ({
             id: randomUUID(),
-            songId: song.songId,
+            spotifySongId: song.spotifySongId,
             pollId: poll.id,
             title: song.title,
             artist: song.artist,

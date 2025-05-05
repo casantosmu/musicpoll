@@ -5,7 +5,7 @@ import type Logger from "@/Logger.js";
 
 interface PollSong {
     id: string;
-    songId: string;
+    spotifySongId: string;
     pollId: string;
     title: string;
     artist: string;
@@ -27,11 +27,11 @@ export default class PollSongRepository extends Repository<PollSong> {
 
     async countVotesByPollId(pollId: string, { limit = 1000, offset = 0 }: Pagination = {}) {
         const votesSql = `
-            SELECT count(sv.poll_song_id)::int as count, ps.id, ps.song_id, ps.title, ps.artist, ps.album, ps.album_img
+            SELECT count(sv.poll_song_id)::int as count, ps.id, ps.spotify_song_id, ps.title, ps.artist, ps.album, ps.album_img
             FROM ${this.tableName} ps
             LEFT JOIN song_votes sv ON ps.id = sv.poll_song_id
             WHERE ps.poll_id = $1
-            GROUP BY ps.id, ps.song_id, ps.title, ps.artist, ps.album, ps.album_img
+            GROUP BY ps.id, ps.spotify_song_id, ps.title, ps.artist, ps.album, ps.album_img
             ORDER BY count DESC
             LIMIT $2 OFFSET $3;
         `;
@@ -59,7 +59,7 @@ export default class PollSongRepository extends Repository<PollSong> {
             votes: camelcaseKeys(votes.rows) as {
                 count: number;
                 id: string;
-                songId: string;
+                spotifySongId: string;
                 title: string;
                 artist: string;
                 album: string;

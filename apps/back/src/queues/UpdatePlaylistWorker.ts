@@ -44,7 +44,7 @@ export default class UpdatePlaylistWorker {
         await this.spotifyService.replacePlaylistItems({
             userId: poll.userId,
             spotifyPlaylistId: poll.spotifyPlaylistId,
-            trackIds: votesResult.votes.map((vote) => vote.songId),
+            trackIds: votesResult.votes.map((vote) => vote.spotifySongId),
         });
         this.logger.info(`Successfully updated playlist ${poll.spotifyPlaylistId} for poll: ${poll.id}`);
     }

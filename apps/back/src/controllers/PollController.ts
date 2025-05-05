@@ -49,7 +49,7 @@ export default class PollController {
             ...req.body,
             songs: req.body.songs.map((song) => ({
                 ...song,
-                songId: song.id,
+                spotifySongId: song.id,
             })),
             userId: user.id,
             spotifyPlaylistId: playlistResult.id,
