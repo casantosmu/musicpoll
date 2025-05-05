@@ -7,6 +7,8 @@ USERNAME="musicpoll"
 SERVER_IP=${1}
 BACKEND_PATH="./apps/back"
 FRONTEND_PATH="./apps/front"
+ECOSYSTEM_CONFIG_SOURCE="./cloud/ecosystem.config.cjs"
+
 REMOTE_BACKEND_PATH="/home/$USERNAME/app/back"
 REMOTE_FRONTEND_PATH="/home/$USERNAME/app/front"
 
@@ -45,8 +47,18 @@ else
 fi
 
 # Restart backend PM2 service
+echo -e "${YELLOW}Deploying ecosystem.config.cjs to $SERVER_IP...${RESET}"
+rsync -avz "$ECOSYSTEM_CONFIG_SOURCE" "$USERNAME@$SERVER_IP:$REMOTE_BACKEND_PATH/"
+
+if [ $? -eq 0 ]; then
+    echo -e "${GREEN}ecosystem.config.cjs deployed successfully!${RESET}"
+else
+    echo "Error: ecosystem.config.cjs deployment failed"
+    exit 1
+fi
+
 echo -e "${YELLOW}Restarting backend service...${RESET}"
-ssh $USERNAME@$SERVER_IP "source ~/.nvm/nvm.sh && cd $REMOTE_BACKEND_PATH && pm2 reload musicpoll-back"
+ssh $USERNAME@$SERVER_IP "source ~/.nvm/nvm.sh && cd $REMOTE_BACKEND_PATH && pm2 reload ecosystem.config.cjs"
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}Backend service restarted successfully!${RESET}"
