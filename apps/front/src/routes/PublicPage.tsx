@@ -1,7 +1,8 @@
-import { Navigate, Outlet } from "react-router";
+import { PropsWithChildren } from "react";
+import { Navigate } from "react-router";
 import useAuth from "@/providers/auth/useAuth.ts";
 
-export default function PublicLayout() {
+export default function PublicPage({ children }: PropsWithChildren) {
     const { isLoggedIn, isLoading } = useAuth();
 
     if (isLoading) {
@@ -12,5 +13,5 @@ export default function PublicLayout() {
         return <Navigate to="/dashboard" replace />;
     }
 
-    return <Outlet />;
+    return children;
 }
