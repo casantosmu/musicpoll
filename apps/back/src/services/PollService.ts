@@ -4,6 +4,7 @@ import type Queues from "@/Queues.js";
 import type PollRepository from "@/repositories/PollRepository.js";
 import type PollSongRepository from "@/repositories/PollSongRepository.js";
 import type SongVoteRepository from "@/repositories/SongVoteRepository.js";
+import ERROR_CODES from "@/errors/ERROR_CODES.js";
 import NotFoundError from "@/errors/NotFoundError.js";
 import ConflictError from "@/errors/ConflictError.js";
 
@@ -123,7 +124,7 @@ export default class PollService {
 
         const hasVoted = await Promise.all(pollIds.map((id) => this.songVoteRepository.hasUserVoted(userId, id)));
         if (hasVoted.some((v) => v)) {
-            throw new ConflictError("The user has already voted in this poll");
+            throw new ConflictError("The user has already voted in this poll", ERROR_CODES.POLL_ALREADY_VOTED);
         }
 
         const created = votes.map((vote) => ({
