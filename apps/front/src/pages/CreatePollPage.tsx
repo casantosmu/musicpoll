@@ -199,23 +199,22 @@ export default function CreatePollPage() {
                     {formData.songs.length > 0 ? (
                         <div className="space-y-2">
                             {formData.songs.map((song) => (
-                                <div
-                                    key={song.id}
-                                    className="flex justify-between items-center p-3 bg-zinc-800 rounded-lg"
-                                >
-                                    <img
-                                        src={song.albumImg}
-                                        alt={`${song.album} cover`}
-                                        className="w-12 h-12 rounded-md mr-3"
-                                    />
-                                    <div className="flex-1">
-                                        <p className="font-medium text-white">{song.title}</p>
-                                        <div className="flex text-sm text-zinc-400">
-                                            <p>{song.artist}</p>
-                                            <span className="mx-1">•</span>
-                                            <p>{song.album}</p>
-                                        </div>
+                                <div key={song.id} className="flex items-center p-3 bg-zinc-800 rounded-lg">
+                                    <div className="h-12 w-12 flex-shrink-0 rounded mr-4">
+                                        <img
+                                            src={song.albumImg}
+                                            alt={`${song.album} cover`}
+                                            className="h-full w-full object-cover"
+                                        />
                                     </div>
+
+                                    <div className="flex-1">
+                                        <h3 className="font-medium text-white">{song.title}</h3>
+                                        <p className="text-sm text-zinc-400">
+                                            {song.artist} • {song.album}
+                                        </p>
+                                    </div>
+
                                     <button
                                         type="button"
                                         onClick={() => {
@@ -311,19 +310,21 @@ export default function CreatePollPage() {
                                             handleAddSongSelection(song);
                                         }}
                                     >
-                                        <img
-                                            src={song.albumImg}
-                                            alt={`${song.album} cover`}
-                                            className="w-12 h-12 rounded-md mr-3"
-                                        />
-                                        <div className="flex-1">
-                                            <p className="font-medium text-white">{song.title}</p>
-                                            <div className="flex text-sm text-zinc-400">
-                                                <p>{song.artist}</p>
-                                                <span className="mx-1">•</span>
-                                                <p>{song.album}</p>
-                                            </div>
+                                        <div className="h-12 w-12 flex-shrink-0 rounded mr-4">
+                                            <img
+                                                src={song.albumImg}
+                                                alt={`${song.album} cover`}
+                                                className="h-full w-full object-cover"
+                                            />
                                         </div>
+
+                                        <div className="flex-1">
+                                            <h3 className="font-medium text-white">{song.title}</h3>
+                                            <p className="text-sm text-zinc-400">
+                                                {song.artist} • {song.album}
+                                            </p>
+                                        </div>
+
                                         {isSongSelectedOrAdded(song) ? (
                                             <div className="p-1 text-green-500 bg-green-900 bg-opacity-30 rounded-full">
                                                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
