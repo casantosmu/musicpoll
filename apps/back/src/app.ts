@@ -8,6 +8,7 @@ import ServerConfig from "@/config/ServerConfig.js";
 import SpotifyConfig from "@/config/SpotifyConfig.js";
 import reqLog from "@/middlewares/reqLog.js";
 import redirectToLocalhost from "@/middlewares/redirectToLocalhost.js";
+import errorHandler from "@/errors/errorHandler.js";
 
 import Cache from "@/Cache.js";
 import Validator from "@/Validator.js";
@@ -215,6 +216,8 @@ export default function app({ logger, pool, redis, queues }: Parameters) {
             ),
         ).callback(req, res, next);
     });
+
+    errorHandler(app);
 
     return app;
 }
