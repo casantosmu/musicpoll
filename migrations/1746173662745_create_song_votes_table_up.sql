@@ -4,8 +4,7 @@ CREATE TABLE song_votes
     poll_song_id uuid references poll_songs (id)                    not null,
     user_id      uuid references users (id)                         not null,
     created_at   timestamp with time zone default current_timestamp not null,
-    updated_at   timestamp with time zone default current_timestamp not null,
-    UNIQUE (poll_song_id, user_id)
+    updated_at   timestamp with time zone default current_timestamp not null
 );
 
 CREATE TRIGGER set_updated_at_trigger

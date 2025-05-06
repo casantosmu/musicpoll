@@ -5,6 +5,7 @@ import type PollRepository from "@/repositories/PollRepository.js";
 import type PollSongRepository from "@/repositories/PollSongRepository.js";
 import type SongVoteRepository from "@/repositories/SongVoteRepository.js";
 import NotFoundError from "@/errors/NotFoundError.js";
+import ConflictError from "@/errors/ConflictError.js";
 
 interface PollSong {
     id: string;
@@ -118,6 +119,13 @@ export default class PollService {
     }
 
     async vote(userId: string, votes: Vote[]) {
+        const pollIds = await this.pollSongRepository.getDistinctPollIdsByIds(votes.map((v) => v.pollSongId));
+
+        const hasVoted = await Promise.all(pollIds.map((id) => this.songVoteRepository.hasUserVoted(userId, id)));
+        if (hasVoted.some((v) => v)) {
+            throw new ConflictError("The user has already voted in this poll");
+        }
+
         const created = votes.map((vote) => ({
             id: randomUUID(),
             pollSongId: vote.pollSongId,
@@ -128,10 +136,9 @@ export default class PollService {
         await this.songVoteRepository.bulkSave(created);
         this.logger.info(`Successfully saved ${votes.length} votes`);
 
-        const pollIds = await this.pollSongRepository.getDistinctPollIdsByIds(votes.map((v) => v.pollSongId));
         this.logger.info(`Adding ${pollIds.length} jobs to update playlists for polls: ${pollIds.join(", ")}`);
-        const queue = this.queues.get("updatePlaylist");
-        await queue.addJobs(pollIds.map((pollId) => ({ pollId })));
+        const jobs = pollIds.map((pollId) => ({ pollId }));
+        await this.queues.get("updatePlaylist").addJobs(jobs);
     }
 
     async getResultByPollId(pollId: string, options?: { limit: number }) {
