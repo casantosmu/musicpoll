@@ -20,9 +20,20 @@
       "presentation": { "panel": "new", "group": "dev" }
     },
     {
-      "label": "Start All Dev",
+      "label": "docker:compose:up",
+      "type": "shell",
+      "command": "docker compose up -d",
+      "presentation": { "reveal": "always", "panel": "new" }
+    },
+    {
+      "label": "start:dev:apps:parallel",
       "dependsOn": ["dev:front", "dev:back", "dev:workers"],
-      "dependsOrder": "parallel",
+      "dependsOrder": "parallel"
+    },
+    {
+      "label": "Start All Dev",
+      "dependsOn": ["docker:compose:up", "start:dev:apps:parallel"],
+      "dependsOrder": "sequence",
       "group": {
         "kind": "build",
         "isDefault": true
