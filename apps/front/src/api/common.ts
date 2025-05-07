@@ -13,4 +13,5 @@ export interface ResponseList<Item> {
 
 export interface ResponseError {
     message: string;
+    code: string;
 }
