@@ -1,0 +1,5 @@
+const ERROR_CODES = {
+    POLL_ALREADY_VOTED: "POLL_ALREADY_VOTED",
+};
+
+export default ERROR_CODES;

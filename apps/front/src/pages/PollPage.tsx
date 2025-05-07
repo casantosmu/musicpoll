@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
+import { ChevronRight, Loader2 } from "lucide-react";
+import ERROR_CODES from "@/api/ERROR_CODES";
 import PollAPI, { Poll } from "@/api/PollAPI";
 import UserAPI, { User } from "@/api/UserAPI";
-import { ChevronRight, Loader2 } from "lucide-react";
 
 export default function PollPage() {
     const [poll, setPoll] = useState<Poll | null>();
@@ -14,6 +15,11 @@ export default function PollPage() {
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState("");
+
+    const printError = (message: string) => {
+        setError(message);
+        window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    };
 
     const handleOptionSelect = (songId: string) => {
         if (isSubmitting) {
@@ -29,8 +35,7 @@ export default function PollPage() {
 
     const handleVote = () => {
         if (selectedOptions.length === 0) {
-            setError("Please select at least one option");
-            window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+            printError("Please select at least one option");
             return;
         }
 
@@ -46,6 +51,11 @@ export default function PollPage() {
             .then((result) => {
                 if (result.success) {
                     // redirect!!
+                    return;
+                }
+                if (result.error.code === ERROR_CODES.POLL_ALREADY_VOTED) {
+                    printError("You already voted on this poll");
+                    return;
                 }
             })
             .catch(console.error)
