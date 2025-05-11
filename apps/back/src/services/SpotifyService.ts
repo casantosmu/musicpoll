@@ -172,7 +172,7 @@ export default class SpotifyService {
             images: ImageObject[];
         };
 
-        if (trackIds) {
+        if (trackIds && trackIds.length > 0) {
             await this.addPlaylistItems({
                 userId,
                 spotifyPlaylistId: json.id,
