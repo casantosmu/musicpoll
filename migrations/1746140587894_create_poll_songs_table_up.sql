@@ -2,7 +2,7 @@ CREATE TABLE poll_songs
 (
     id              uuid                     default gen_random_uuid() primary key,
     spotify_song_id varchar                                            not null,
-    poll_id         uuid references polls (id)                         not null,
+    poll_id         uuid references polls (id) ON DELETE CASCADE       not null,
     title           varchar                                            not null,
     artist          varchar                                            not null,
     album           varchar                                            not null,

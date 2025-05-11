@@ -1,7 +1,7 @@
 CREATE TABLE linked_accounts
 (
     id               uuid                     default gen_random_uuid() primary key,
-    user_id          uuid references users (id)                         not null,
+    user_id          uuid references users (id) ON DELETE CASCADE       not null,
     provider         varchar                                            not null,
     provider_user_id varchar                                            not null,
     access_token     varchar                                            not null,

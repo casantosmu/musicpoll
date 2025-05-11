@@ -1,7 +1,7 @@
 CREATE TABLE polls
 (
     id                     uuid                     default gen_random_uuid() primary key,
-    user_id                uuid references users (id)                         not null,
+    user_id                uuid references users (id) ON DELETE CASCADE       not null,
     spotify_playlist_id    varchar                                            not null,
     title                  varchar                                            not null,
     description            varchar,
