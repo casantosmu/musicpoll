@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout";
 import ProtectedPage from "@/routes/ProtectedPage";
 import PublicPage from "@/routes/PublicPage";
 import HomePage from "@/pages/HomePage";
+import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage";
 import PollPage from "@/pages/PollPage";
 import DashboardPage from "@/pages/DashboardPage";
 import CreatePollPage from "@/pages/CreatePollPage";
@@ -17,6 +18,15 @@ export default function Router() {
                         <PublicPage>
                             <HomePage />
                         </PublicPage>
+                    }
+                />
+
+                <Route
+                    path="/privacy-policy"
+                    element={
+                        <Layout>
+                            <PrivacyPolicyPage />
+                        </Layout>
                     }
                 />
 
