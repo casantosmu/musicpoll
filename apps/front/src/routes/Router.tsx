@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout";
 import ProtectedPage from "@/routes/ProtectedPage";
 import PublicPage from "@/routes/PublicPage";
 import HomePage from "@/pages/HomePage";
+import LoginPage from "@/pages/LoginPage";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage";
 import TermsAndConditionsPage from "@/pages/TermsAndConditionsPage";
 import PollPage from "@/pages/PollPage";
@@ -13,11 +14,13 @@ export default function Router() {
     return (
         <BrowserRouter>
             <Routes>
+                <Route path="/" element={<HomePage />} />
+
                 <Route
-                    path="/"
+                    path="/login"
                     element={
                         <PublicPage>
-                            <HomePage />
+                            <LoginPage />
                         </PublicPage>
                     }
                 />
