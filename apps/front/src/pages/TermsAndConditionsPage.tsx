@@ -6,7 +6,7 @@ export default function TermsAndConditionsPage() {
                 <p className="text-gray-400 mt-2">Last updated: May 11, 2025</p>
             </div>
 
-            <div className="px-6 py-8">
+            <div className="prose max-w-none text-gray-200">
                 <p className="text-gray-300 mb-8 font-medium">
                     Please read these terms and conditions carefully before using Our Service.
                 </p>

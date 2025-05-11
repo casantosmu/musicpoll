@@ -32,7 +32,7 @@ export default function Router() {
                 />
 
                 <Route
-                    path="/terms-conditions"
+                    path="/terms"
                     element={
                         <Layout>
                             <TermsAndConditionsPage />

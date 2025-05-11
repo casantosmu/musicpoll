@@ -4,6 +4,7 @@ import { LogOut, Music, Plus, User } from "lucide-react";
 import AuthAPI from "@/api/AuthAPI";
 import useAuth from "@/providers/auth/useAuth.ts";
 import useOnClickOutside from "@/hooks/useOnClickOutside.tsx";
+import Footer from "@/components/Footer";
 
 export default function Layout({ children }: PropsWithChildren) {
     const { logout, isLoggedIn } = useAuth();
@@ -34,9 +35,9 @@ export default function Layout({ children }: PropsWithChildren) {
     };
 
     return (
-        <div className="min-h-screen bg-zinc-900 text-white">
+        <div className="min-h-screen bg-zinc-900 text-white flex flex-col">
             {/* Header/Navbar */}
-            <header className="bg-zinc-800 shadow-md">
+            <header className="bg-zinc-800 shadow-md w-full">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex h-16 items-center">
                         {/* Logo */}
@@ -93,7 +94,12 @@ export default function Layout({ children }: PropsWithChildren) {
             </header>
 
             {/* Main Content */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">{children}</main>
+            <main className="w-full flex-grow">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">{children}</div>
+            </main>
+
+            {/* Footer */}
+            <Footer />
         </div>
     );
 }
