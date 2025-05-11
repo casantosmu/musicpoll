@@ -3,6 +3,7 @@ import type Cache from "@/Cache.js";
 import type SpotifyConfig from "@/config/SpotifyConfig.js";
 import type LinkedAccountRepository from "@/repositories/LinkedAccountRepository.js";
 import type { ResultList } from "@/services/common.js";
+import crypto from "node:crypto";
 import InternalServerError from "@/errors/InternalServerError.js";
 
 interface Paginated<Item> {
@@ -222,12 +223,20 @@ export default class SpotifyService {
         }
     }
 
-    buildAuthUrl() {
+    generateState(length: number) {
+        return crypto
+            .randomBytes(Math.ceil(length / 2))
+            .toString("hex")
+            .slice(0, length);
+    }
+
+    buildAuthUrl(state: string) {
         const url = new URL("https://accounts.spotify.com/authorize");
         url.searchParams.set("response_type", "code");
         url.searchParams.set("client_id", this.spotifyConfig.clientId);
         url.searchParams.set("scope", "user-read-email playlist-modify-public playlist-modify-private");
         url.searchParams.set("redirect_uri", this.spotifyConfig.redirectUri);
+        url.searchParams.set("state", state);
         return url.toString();
     }
 
