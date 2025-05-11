@@ -4,6 +4,7 @@ import ProtectedPage from "@/routes/ProtectedPage";
 import PublicPage from "@/routes/PublicPage";
 import HomePage from "@/pages/HomePage";
 import PrivacyPolicyPage from "@/pages/PrivacyPolicyPage";
+import TermsAndConditionsPage from "@/pages/TermsAndConditionsPage";
 import PollPage from "@/pages/PollPage";
 import DashboardPage from "@/pages/DashboardPage";
 import CreatePollPage from "@/pages/CreatePollPage";
@@ -26,6 +27,15 @@ export default function Router() {
                     element={
                         <Layout>
                             <PrivacyPolicyPage />
+                        </Layout>
+                    }
+                />
+
+                <Route
+                    path="/terms-conditions"
+                    element={
+                        <Layout>
+                            <TermsAndConditionsPage />
                         </Layout>
                     }
                 />
