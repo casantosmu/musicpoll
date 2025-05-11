@@ -14,7 +14,7 @@ export default function PollPage() {
     const [isGetPollLoading, setIsGetPollLoading] = useState(true);
 
     const [user, setUser] = useState<User | null>();
-    const [isGetUserLoading, setIsGetUserLoading] = useState(true);
+    const [isGetUserLoading, setIsGetUserLoading] = useState(false);
 
     const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -100,6 +100,7 @@ export default function PollPage() {
             return;
         }
 
+        setIsGetUserLoading(true);
         UserAPI.getByID(poll.userId)
             .then((result) => {
                 if (result.success) {

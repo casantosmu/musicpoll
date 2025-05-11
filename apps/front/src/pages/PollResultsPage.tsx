@@ -9,10 +9,10 @@ export default function PollResultsPage() {
     const [isGetPollLoading, setIsGetPollLoading] = useState(true);
 
     const [user, setUser] = useState<User | null>();
-    const [isGetUserLoading, setIsGetUserLoading] = useState(true);
+    const [isGetUserLoading, setIsGetUserLoading] = useState(false);
 
     const [voteResults, setVoteResults] = useState<PollResult | null>();
-    const [isGetVotesLoading, setIsGetVotesLoading] = useState(true);
+    const [isGetVotesLoading, setIsGetVotesLoading] = useState(false);
 
     const { id } = useParams();
     if (!id) {
@@ -37,6 +37,7 @@ export default function PollResultsPage() {
             return;
         }
 
+        setIsGetUserLoading(true);
         UserAPI.getByID(poll.userId)
             .then((result) => {
                 if (result.success) {
@@ -54,6 +55,7 @@ export default function PollResultsPage() {
             return;
         }
 
+        setIsGetVotesLoading(true);
         PollAPI.getResultByPollId(id)
             .then((result) => {
                 if (result.success) {
