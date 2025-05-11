@@ -1,6 +1,6 @@
 import { PropsWithChildren, useState } from "react";
 import { Link } from "react-router";
-import { LogOut, Music, Plus, User } from "lucide-react";
+import { LogOut, Music, Plus, User, LogIn } from "lucide-react";
 import AuthAPI from "@/api/AuthAPI";
 import useAuth from "@/providers/auth/useAuth.ts";
 import useOnClickOutside from "@/hooks/useOnClickOutside.tsx";
@@ -56,6 +56,17 @@ export default function Layout({ children }: PropsWithChildren) {
                                 Create Poll
                             </Link>
                         </nav>
+
+                        {/* Login/Signup button for non-logged in users */}
+                        {!isLoggedIn && (
+                            <Link
+                                to="/login"
+                                className="flex items-center px-4 py-2 rounded-full text-sm text-white bg-green-600 hover:bg-green-700"
+                            >
+                                <LogIn className="h-4 w-4 mr-2" />
+                                Login / Signup
+                            </Link>
+                        )}
 
                         {/* User Avatar and Dropdown */}
                         {isLoggedIn && (
