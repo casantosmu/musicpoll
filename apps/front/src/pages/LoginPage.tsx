@@ -25,20 +25,6 @@ export default function LoginPage() {
                             </span>
                         </a>
                     </div>
-
-                    <div className="mt-8 text-center">
-                        <p className="text-sm text-zinc-400">
-                            Don't have a Spotify account?{" "}
-                            <a
-                                href="https://www.spotify.com/signup"
-                                target="_blank"
-                                rel="noreferrer noopener"
-                                className="font-medium text-green-600 hover:text-green-500"
-                            >
-                                Sign up for Spotify
-                            </a>
-                        </p>
-                    </div>
                 </div>
             </div>
 
