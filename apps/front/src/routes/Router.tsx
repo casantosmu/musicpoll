@@ -9,6 +9,7 @@ import TermsAndConditionsPage from "@/pages/TermsAndConditionsPage";
 import PollPage from "@/pages/PollPage";
 import DashboardPage from "@/pages/DashboardPage";
 import CreatePollPage from "@/pages/CreatePollPage";
+import PollResultsPage from "@/pages/PollResultsPage";
 
 export default function Router() {
     return (
@@ -69,6 +70,15 @@ export default function Router() {
                     element={
                         <Layout>
                             <PollPage />
+                        </Layout>
+                    }
+                />
+
+                <Route
+                    path="/poll/:id/results"
+                    element={
+                        <Layout>
+                            <PollResultsPage />
                         </Layout>
                     }
                 />

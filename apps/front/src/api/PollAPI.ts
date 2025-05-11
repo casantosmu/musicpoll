@@ -38,6 +38,24 @@ export interface Vote {
     action: "add";
 }
 
+export interface PollResult {
+    votes: {
+        count: number;
+        id: string;
+        spotifySongId: string;
+        title: string;
+        artist: string;
+        album: string;
+        albumImg: string;
+    }[];
+    totalVotes: number;
+    pagination: {
+        total: number;
+        limit: number;
+        offset: number;
+    };
+}
+
 const PollAPI = {
     async getById(id: string) {
         const response = await fetch(`/api/v1/polls/${id}`, {
@@ -136,6 +154,37 @@ const PollAPI = {
         return {
             success: true as const,
             data: null,
+        };
+    },
+    async getResultByPollId(id: string) {
+        const response = await fetch(`/api/v1/polls/${id}/results`, {
+            method: "GET",
+        });
+
+        if (!response.ok) {
+            const status = response.status;
+
+            let message = await response.text();
+            let code = "INTERNAL_SERVER_ERROR";
+            try {
+                const json = JSON.parse(message) as ResponseError;
+                message = json.message;
+                code = json.code;
+            } catch {
+                /* empty */
+            }
+
+            return {
+                success: false as const,
+                error: { status, message, code },
+            };
+        }
+
+        const { data } = (await response.json()) as Response<PollResult>;
+
+        return {
+            success: true as const,
+            data,
         };
     },
 };

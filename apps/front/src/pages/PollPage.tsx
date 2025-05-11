@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import { ChevronRight, Loader2 } from "lucide-react";
+import { Link, useNavigate, useParams } from "react-router";
+import { BarChart2, ChevronRight, Loader2 } from "lucide-react";
 import ERROR_CODES from "@/api/ERROR_CODES";
 import PollAPI, { Poll } from "@/api/PollAPI";
 import UserAPI, { User } from "@/api/UserAPI";
 import useAuth from "@/providers/auth/useAuth";
 
 export default function PollPage() {
+    const navigate = useNavigate();
     const { isLoggedIn } = useAuth();
 
     const [poll, setPoll] = useState<Poll | null>();
@@ -63,12 +64,11 @@ export default function PollPage() {
         )
             .then((result) => {
                 if (result.success) {
-                    // redirect!!
+                    void navigate(`/poll/${id}/results`);
                     return;
                 }
                 if (result.error.code === ERROR_CODES.POLL_ALREADY_VOTED) {
                     printError("You already voted on this poll");
-                    return;
                 }
             })
             .catch(console.error)
@@ -194,7 +194,13 @@ export default function PollPage() {
                     ))}
                 </div>
                 <div className="mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                    <span></span>
+                    <Link
+                        to={`/poll/${id}/results`}
+                        className="text-zinc-400 hover:text-zinc-200 flex items-center transition-colors text-sm"
+                    >
+                        <BarChart2 className="h-4 w-4 mr-1" />
+                        See current results
+                    </Link>
 
                     <button
                         type="button"
