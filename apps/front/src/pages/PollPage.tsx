@@ -4,8 +4,11 @@ import { ChevronRight, Loader2 } from "lucide-react";
 import ERROR_CODES from "@/api/ERROR_CODES";
 import PollAPI, { Poll } from "@/api/PollAPI";
 import UserAPI, { User } from "@/api/UserAPI";
+import useAuth from "@/providers/auth/useAuth";
 
 export default function PollPage() {
+    const { isLoggedIn } = useAuth();
+
     const [poll, setPoll] = useState<Poll | null>();
     const [isGetPollLoading, setIsGetPollLoading] = useState(true);
 
@@ -26,6 +29,11 @@ export default function PollPage() {
             return;
         }
 
+        if (!isLoggedIn) {
+            printError("Please log in to vote on this poll");
+            return;
+        }
+
         if (selectedOptions.includes(songId)) {
             setSelectedOptions(selectedOptions.filter((id) => id !== songId));
         } else {
@@ -34,6 +42,11 @@ export default function PollPage() {
     };
 
     const handleVote = () => {
+        if (!isLoggedIn) {
+            printError("Please log in to vote on this poll");
+            return;
+        }
+
         if (selectedOptions.length === 0) {
             printError("Please select at least one option");
             return;
@@ -141,7 +154,7 @@ export default function PollPage() {
                     {poll.songs.map((song) => (
                         <div
                             key={song.id}
-                            className={`flex items-center p-3 rounded-lg cursor-pointer transition-all ${
+                            className={`flex items-center p-3 rounded-lg transition-all ${
                                 selectedOptions.includes(song.id)
                                     ? "bg-green-800/30 border border-green-500"
                                     : "bg-zinc-700/50 hover:bg-zinc-700 border border-transparent"
