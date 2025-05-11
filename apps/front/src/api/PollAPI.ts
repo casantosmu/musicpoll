@@ -26,6 +26,7 @@ interface PollSong {
 export interface Poll {
     id: string;
     userId: string;
+    spotifyPlaylistId: string;
     title: string;
     description: string | null;
     songs: PollSong[];
